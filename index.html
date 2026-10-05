@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Project Structure Manual | Claude & Antigravity</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            claude: {
+              DEFAULT: '#D97706',
+              dark: '#B45309',
+              light: '#FDE68A',
+              card: '#78350F'
+            },
+            gemini: {
+              DEFAULT: '#2563EB',
+              dark: '#1D4ED8',
+              light: '#BFDBFE',
+              card: '#1E3A8A'
+            },
+            surface: {
+              50: '#F8FAFC',
+              100: '#F1F5F9',
+              800: '#1E293B',
+              900: '#0F172A',
+              950: '#020617'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&family=Sarabun:wght@300;400;500;600;700&display=swap');
+    body {
+      font-family: 'Sarabun', 'Plus Jakarta Sans', sans-serif;
+    }
+    code, pre {
+      font-family: 'Fira Code', monospace;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200">
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-medium">
+    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+    <span id="toast-message">คัดลอกสำเร็จแล้ว!</span>
+  </div>
+
+  <!-- Navbar -->
+  <header class="sticky top-0 z-40 backdrop-blur-md bg-white/85 dark:bg-slate-900/85 border-b border-slate-200 dark:border-slate-800 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20 text-white font-bold text-lg">
+          AI
+        </div>
+        <div>
+          <h1 class="font-bold text-base sm:text-lg leading-tight tracking-tight text-slate-900 dark:text-white">AI Project Structure Master</h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400">คู่มือสถาปัตยกรรม &amp; แนวทางการ Setup ไฟล์ละเอียด</p>
+        </div>
+      </div>
+
+      <!-- Quick Nav Links -->
+      <nav class="hidden md:flex items-center gap-1 text-sm font-medium">
+        <button onclick="switchTab('overview')" class="tab-btn px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" data-tab="overview">ภาพรวม &amp; เปรียบเทียบ</button>
+        <button onclick="switchTab('claude')" class="tab-btn px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" data-tab="claude">Claude Guide</button>
+        <button onclick="switchTab('antigravity')" class="tab-btn px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" data-tab="antigravity">Antigravity Guide</button>
+        <button onclick="switchTab('examples')" class="tab-btn px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" data-tab="examples">🚀 ตัวอย่าง Fullstack (Python+DB+UI)</button>
+        <button onclick="switchTab('tree')" class="tab-btn px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" data-tab="tree">Tree</button>
+        <button onclick="switchTab('commands')" class="tab-btn px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" data-tab="commands">คำสั่ง Copy</button>
+      </nav>
+
+      <!-- Theme Toggle -->
+      <div class="flex items-center gap-2">
+        <button onclick="toggleTheme()" class="p-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition-colors" title="สลับโหมดสี">
+          <svg id="theme-icon-dark" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          <svg id="theme-icon-light" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Subnav -->
+  <div class="md:hidden flex overflow-x-auto gap-2 px-4 py-2 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs">
+    <button onclick="switchTab('overview')" class="tab-btn-mobile whitespace-nowrap px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-800 font-semibold" data-tab="overview">ภาพรวม</button>
+    <button onclick="switchTab('claude')" class="tab-btn-mobile whitespace-nowrap px-3 py-1.5 rounded-lg" data-tab="claude">Claude</button>
+    <button onclick="switchTab('antigravity')" class="tab-btn-mobile whitespace-nowrap px-3 py-1.5 rounded-lg" data-tab="antigravity">Antigravity</button>
+    <button onclick="switchTab('examples')" class="tab-btn-mobile whitespace-nowrap px-3 py-1.5 rounded-lg" data-tab="examples">🚀 ตัวอย่าง Fullstack</button>
+    <button onclick="switchTab('tree')" class="tab-btn-mobile whitespace-nowrap px-3 py-1.5 rounded-lg" data-tab="tree">Tree</button>
+    <button onclick="switchTab('commands')" class="tab-btn-mobile whitespace-nowrap px-3 py-1.5 rounded-lg" data-tab="commands">คำสั่ง Copy</button>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+
+    <!-- ========================================== -->
+    <!-- TAB 1: OVERVIEW & COMPARISON -->
+    <!-- ========================================== -->
+    <section id="tab-overview" class="tab-content space-y-10">
+      
+      <!-- Hero Banner -->
+      <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-800 p-8 sm:p-10 shadow-2xl">
+        <div class="absolute -right-20 -top-20 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -left-20 -bottom-20 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="relative z-10 max-w-3xl">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-4">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            Master Template v1.0 พร้อมแนวทาง Setup เชิงลึก
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-4">
+            โครงสร้างโปรเจ็คต้นแบบสำหรับ AI Pair Programming
+          </h2>
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
+            ออกแบบขึ้นเพื่อเป็น <strong>Master Template</strong> สำหรับนำไปคัดลอกใส่ในโปรเจ็คซอฟต์แวร์ใหม่ทุกตัว ช่วยให้ AI เข้าใจสถาปัตยกรรม คำสั่ง Build/Test กฎความปลอดภัย และขั้นตอนการทำงานได้อย่างรวดเร็ว แม่นยำ และมีระเบียบ
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <button onclick="switchTab('claude')" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-sm transition-all shadow-lg shadow-amber-600/30">
+              <span>เจาะลึกการ Setup Claude (CLAUDE.md)</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </button>
+            <button onclick="switchTab('antigravity')" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm transition-all shadow-lg shadow-blue-600/30">
+              <span>เจาะลึกการ Setup Antigravity (GEMINI.md)</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Comparison Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Claude Card -->
+        <div class="rounded-2xl p-6 bg-white dark:bg-slate-900 border border-amber-200 dark:border-amber-900/40 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center font-bold text-xl">
+                C
+              </div>
+              <div>
+                <h3 class="font-bold text-lg text-slate-900 dark:text-white">Claude Code (Anthropic)</h3>
+                <p class="text-xs text-slate-500">โฟลเดอร์ต้นแบบ: <code class="text-amber-600 dark:text-amber-400">claude/</code></p>
+              </div>
+            </div>
+            <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">CLI Native</span>
+          </div>
+          <p class="text-xs text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
+            เน้นการควบคุมผ่านไฟล์ <code class="font-mono text-amber-600 dark:text-amber-300">CLAUDE.md</code> ที่วางไว้ที่ Root เป็นหลัก พร้อมโฟลเดอร์ <code class="font-mono text-amber-600 dark:text-amber-300">.claude/</code> สำหรับ Custom Slash Commands และ MCP Servers
+          </p>
+          <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300">
+            <li class="flex items-center gap-2"><span class="text-amber-500 font-bold">✓</span> <strong>CLAUDE.md:</strong> หน่วยความจำหลักและคำสั่งประจำโปรเจ็ค</li>
+            <li class="flex items-center gap-2"><span class="text-amber-500 font-bold">✓</span> <strong>.claudeignore:</strong> กรองไฟล์ที่ไม่ต้องการให้ประมวลผล</li>
+            <li class="flex items-center gap-2"><span class="text-amber-500 font-bold">✓</span> <strong>Custom Commands:</strong> สร้างคีย์ลัดเช่น <code class="text-xs bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">/review</code>, <code class="text-xs bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">/test</code></li>
+            <li class="flex items-center gap-2"><span class="text-amber-500 font-bold">✓</span> <strong>MCP Integration:</strong> เชื่อมต่อ Stdio / SSE Tools</li>
+          </ul>
+        </div>
+
+        <!-- Antigravity Card -->
+        <div class="rounded-2xl p-6 bg-white dark:bg-slate-900 border border-blue-200 dark:border-blue-900/40 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center font-bold text-xl">
+                A
+              </div>
+              <div>
+                <h3 class="font-bold text-lg text-slate-900 dark:text-white">Google Antigravity (AGY)</h3>
+                <p class="text-xs text-slate-500">โฟลเดอร์ต้นแบบ: <code class="text-blue-600 dark:text-blue-400">antigravity/</code></p>
+              </div>
+            </div>
+            <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300">Enterprise Agent</span>
+          </div>
+          <p class="text-xs text-slate-600 dark:text-slate-400 mb-4 leading-relaxed">
+            รองรับระบบ Customization เต็มรูปแบบด้วย <code class="font-mono text-blue-600 dark:text-blue-300">GEMINI.md</code> (Always-on Rules), Progressive Disclosure Skills ใน <code class="font-mono text-blue-600 dark:text-blue-300">.agents/skills/</code> และ Lifecycle Hooks
+          </p>
+          <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300">
+            <li class="flex items-center gap-2"><span class="text-blue-500 font-bold">✓</span> <strong>GEMINI.md / AGENTS.md:</strong> กฎ Workspace ตรวจสอบตลอดเวลา</li>
+            <li class="flex items-center gap-2"><span class="text-blue-500 font-bold">✓</span> <strong>Modular Skills:</strong> โหลดรันบุ๊กขั้นตอนทำงานตามความต้องการ ประหยัดโทเคน</li>
+            <li class="flex items-center gap-2"><span class="text-blue-500 font-bold">✓</span> <strong>Lifecycle Hooks:</strong> รัน Lint / Safety Check อัตโนมัติใน <code class="text-xs bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">hooks.json</code></li>
+            <li class="flex items-center gap-2"><span class="text-blue-500 font-bold">✓</span> <strong>Modular Rules:</strong> แยกหมวดหมู่กฎใน <code class="text-xs bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded">.agents/rules/</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Feature Comparison Table -->
+      <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+        <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40">
+          <h3 class="font-bold text-base text-slate-900 dark:text-white">ตารางเปรียบเทียบเชิงโครงสร้างและการทำงาน</h3>
+          <p class="text-xs text-slate-500">สรุปตำแหน่งไฟล์และหน้าที่ระหว่างทั้งสองระบบ</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs sm:text-sm">
+            <thead class="bg-slate-100 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[11px]">
+              <tr>
+                <th class="py-3 px-4 font-semibold">หน้าที่ / คุณสมบัติ</th>
+                <th class="py-3 px-4 font-semibold text-amber-600 dark:text-amber-400">Claude Code</th>
+                <th class="py-3 px-4 font-semibold text-blue-600 dark:text-blue-400">Google Antigravity</th>
+                <th class="py-3 px-4 font-semibold text-slate-500">คำอธิบาย</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+              <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+                <td class="py-3 px-4 font-medium text-slate-900 dark:text-white">ไฟล์กฎหลัก (Root Rules)</td>
+                <td class="py-3 px-4 font-mono text-amber-600 dark:text-amber-400 font-semibold">CLAUDE.md</td>
+                <td class="py-3 px-4 font-mono text-blue-600 dark:text-blue-400 font-semibold">GEMINI.md หรือ AGENTS.md</td>
+                <td class="py-3 px-4 text-slate-500">เอกสารแรกที่ AI อ่านเพื่อเข้าใจคำสั่ง, Stack, Style</td>
+              </tr>
+              <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+                <td class="py-3 px-4 font-medium text-slate-900 dark:text-white">การละเว้นไฟล์ (Ignore List)</td>
+                <td class="py-3 px-4 font-mono text-amber-600 dark:text-amber-400">.claudeignore</td>
+                <td class="py-3 px-4 font-mono text-blue-600 dark:text-blue-400">.geminiignore / .agentignore</td>
+                <td class="py-3 px-4 text-slate-500">ป้องกันการค้นหาหรือ index ไฟล์ build, secret, cache</td>
+              </tr>
+              <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+                <td class="py-3 px-4 font-medium text-slate-900 dark:text-white">โฟลเดอร์ปรับแต่งหลัก</td>
+                <td class="py-3 px-4 font-mono text-amber-600 dark:text-amber-400">.claude/</td>
+                <td class="py-3 px-4 font-mono text-blue-600 dark:text-blue-400">.agents/ (หรือ .agent/)</td>
+                <td class="py-3 px-4 text-slate-500">โฟลเดอร์สำหรับเก็บเครื่องมือ คำสั่ง กฎ และการตั้งค่าเฉพาะ</td>
+              </tr>
+              <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+                <td class="py-3 px-4 font-medium text-slate-900 dark:text-white">ขั้นตอนทำงานเฉพาะทาง</td>
+                <td class="py-3 px-4 font-mono text-amber-600 dark:text-amber-400">.claude/commands/*.md</td>
+                <td class="py-3 px-4 font-mono text-blue-600 dark:text-blue-400">.agents/skills/&lt;name&gt;/SKILL.md</td>
+                <td class="py-3 px-4 text-slate-500">Claude ใช้ Slash Commands ส่วน Antigravity ใช้ Progressive Skills</td>
+              </tr>
+              <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+                <td class="py-3 px-4 font-medium text-slate-900 dark:text-white">Event / Lifecycle Hooks</td>
+                <td class="py-3 px-4 text-slate-400">-</td>
+                <td class="py-3 px-4 font-mono text-blue-600 dark:text-blue-400">.agents/hooks.json</td>
+                <td class="py-3 px-4 text-slate-500">สั่งรัน Script อัตโนมัติก่อนหรือหลัง Agent เรียก Tool</td>
+              </tr>
+              <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+                <td class="py-3 px-4 font-medium text-slate-900 dark:text-white">เครื่องมือภายนอก (MCP)</td>
+                <td class="py-3 px-4 font-mono text-amber-600 dark:text-amber-400">.claude/mcp.json</td>
+                <td class="py-3 px-4 font-mono text-blue-600 dark:text-blue-400">.agents/mcp_config.json</td>
+                <td class="py-3 px-4 text-slate-500">ต่อเชื่อมกับ File system, Database, Memory, Web Fetch</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: CLAUDE TEMPLATE DEEP DIVE & SETUP -->
+    <!-- ========================================== -->
+    <section id="tab-claude" class="tab-content hidden space-y-10">
+      
+      <!-- Banner -->
+      <div class="p-6 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/20 text-amber-600 dark:text-amber-400">Claude Code Guide</span>
+          <h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-1">แนวทางการ Setup แต่ละไฟล์ของ Claude Code</h2>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300">คู่มือเจาะลึกว่าแต่ละไฟล์ต้องใส่อะไรเข้าไปบ้าง พร้อมตัวอย่างโค้ดจริงที่สามารถนำไปปรับแต่งได้ทันที</p>
+        </div>
+        <button onclick="copyToClipboard('cp -r claude/CLAUDE.md claude/.claudeignore claude/.claude .')" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-semibold shadow transition-all flex items-center gap-2 whitespace-nowrap">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+          คัดลอกคำสั่ง Copy Claude Template
+        </button>
+      </div>
+
+      <!-- Quick Subnav for Claude Files -->
+      <div class="flex flex-wrap gap-2 text-xs font-medium border-b border-slate-200 dark:border-slate-800 pb-3">
+        <a href="#claude-claudemd" class="px-3 py-1.5 rounded-lg bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 hover:bg-amber-200 transition-colors">📄 1. CLAUDE.md</a>
+        <a href="#claude-ignore" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">🚫 2. .claudeignore</a>
+        <a href="#claude-settings" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">⚙️ 3. .claude/settings.json</a>
+        <a href="#claude-mcp" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">🔌 4. .claude/mcp.json</a>
+        <a href="#claude-commands" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">⚡ 5. Custom Commands (/review, /test, /commit)</a>
+      </div>
+
+      <!-- ================= 1. CLAUDE.md ================= -->
+      <div id="claude-claudemd" class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 space-y-6 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold flex items-center justify-center text-sm">1</span>
+            <div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white font-mono">CLAUDE.md</h3>
+              <p class="text-xs text-slate-500">ตำแหน่ง: วางไว้ที่ Root โฟลเดอร์ของโปรเจ็ค (<code class="font-mono">./CLAUDE.md</code>)</p>
+            </div>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300 self-start sm:self-auto">สำคัญที่สุด (Must Have)</span>
+        </div>
+
+        <!-- Explanation: What to put -->
+        <div class="space-y-4">
+          <h4 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+            <span class="text-amber-500">📌</span> ในไฟล์ CLAUDE.md ต้องใส่อะไรเข้าไปบ้าง?
+          </h4>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            <code class="font-mono text-amber-600 dark:text-amber-300 font-semibold">CLAUDE.md</code> เปรียบเสมือน <strong>Onboarding Document</strong> และ <strong>สมองประจำโปรเจ็ค</strong> ที่ Claude Code จะเปิดอ่านทุกครั้งก่อนเริ่มทำงาน เพื่อให้ AI เข้าใจบริบทได้ทันทีโดยไม่ต้องถามซ้ำ ควรมี 6 หมวดสำคัญดังต่อไปนี้:
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 space-y-1.5">
+              <span class="font-bold text-amber-600 dark:text-amber-400 text-sm block">1. Project Overview &amp; Architecture</span>
+              <p class="text-slate-600 dark:text-slate-400">อธิบายว่าโปรเจ็คนี้ทำอะไร มีเป้าหมายอะไร สถาปัตยกรรมแบบไหน (เช่น Clean Architecture, MVC, Microservices) และผังโฟลเดอร์หลัก เช่น <code class="font-mono">src/core/</code>, <code class="font-mono">src/api/</code></p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 space-y-1.5">
+              <span class="font-bold text-amber-600 dark:text-amber-400 text-sm block">2. Tech Stack &amp; Environment</span>
+              <p class="text-slate-600 dark:text-slate-400">ระบุ Runtime, ภาษา, Framework และ Database พร้อมเวอร์ชัน เช่น Node.js 20+, TypeScript 5.x, Next.js 15, PostgreSQL, pnpm เพื่อป้องกัน AI เขียนโค้ดด้วย API เวอร์ชันเก่า</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 space-y-1.5">
+              <span class="font-bold text-amber-600 dark:text-amber-400 text-sm block">3. Essential Operational Commands</span>
+              <p class="text-slate-600 dark:text-slate-400">คำสั่งใช้งานจริงที่ AI รันได้ทันที: คำสั่ง Install, Dev server, Production build, คำสั่งรัน Test (ทั้งหมด, เจาะจงไฟล์เดียว, watch), Lint, และ Typecheck</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 space-y-1.5">
+              <span class="font-bold text-amber-600 dark:text-amber-400 text-sm block">4. Coding Standards &amp; Patterns</span>
+              <p class="text-slate-600 dark:text-slate-400">กฎการตั้งชื่อไฟล์/ตัวแปร/ฟังก์ชัน, ห้ามใช้ <code class="font-mono">any</code>, รูปแบบการดักจับ Error และข้อกำหนดว่าต้องเขียน Unit test คู่กับโค้ดใหม่เสมอหรือไม่</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 space-y-1.5">
+              <span class="font-bold text-amber-600 dark:text-amber-400 text-sm block">5. Git &amp; Workflow Guidelines</span>
+              <p class="text-slate-600 dark:text-slate-400">การตั้งชื่อ Branch (<code class="font-mono">feat/</code>, <code class="font-mono">fix/</code>) และรูปแบบ Commit Message ตาม Conventional Commits (<code class="font-mono">feat:</code>, <code class="font-mono">fix:</code>, <code class="font-mono">refactor:</code>)</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 space-y-1.5">
+              <span class="font-bold text-amber-600 dark:text-amber-400 text-sm block">6. Security &amp; Safety Rules</span>
+              <p class="text-slate-600 dark:text-slate-400">กฎเหล็กความปลอดภัย เช่น ห้าม Commit Secret/API Keys เด็ดขาด, ห้ามรันคำสั่งลบฐานข้อมูลโดยไม่ถาม และการ Validate Input ก่อนส่งเข้า Database</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Concrete Example -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">ตัวอย่างโค้ดจริงในไฟล์ CLAUDE.md สำหรับนำไปใช้:</span>
+            <button onclick="copyToClipboard(document.getElementById('code-claudemd-sample').innerText)" class="px-3 py-1 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 text-xs font-semibold transition-colors flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+              คัดลอกตัวอย่าง
+            </button>
+          </div>
+          <pre id="code-claudemd-sample" class="bg-slate-950 text-slate-200 p-5 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed border border-slate-800"><code># Project Guidelines for Claude Code
+
+## 1. Project Overview & Architecture
+- **Project Name**: My-Awesome-App
+- **Description**: Next.js 15 e-commerce application with Stripe payment integration.
+- **Key Modules**:
+  - `src/app/`: Next.js App Router pages and API route handlers
+  - `src/components/`: Reusable UI components (Tailwind CSS + Radix UI)
+  - `src/lib/`: Shared utilities, database client, and Stripe helpers
+  - `src/services/`: Business logic layer (Orders, Products, Checkout)
+  - `tests/`: Vitest unit and integration test suites
+
+## 2. Tech Stack & Environment
+- **Runtime**: Node.js 20 LTS
+- **Language**: TypeScript 5.5+ (Strict mode enabled)
+- **Framework**: Next.js 15 (App Router, React Server Components)
+- **Database**: PostgreSQL (Prisma ORM)
+- **Package Manager**: pnpm
+
+## 3. Essential Commands
+### Development & Build
+- Install dependencies: `pnpm install`
+- Start dev server: `pnpm run dev`
+- Production build: `pnpm run build`
+- Database migrations: `pnpm prisma migrate dev`
+
+### Testing & Verification
+- Run all tests: `pnpm test`
+- Run single test: `pnpm test -- src/services/order.test.ts`
+- Run test coverage: `pnpm test -- --coverage`
+- Lint check: `pnpm run lint`
+- Type checking: `pnpm run type-check`
+
+## 4. Coding Standards & Conventions
+- **Naming**: `kebab-case` for files/folders, `PascalCase` for React components/types, `camelCase` for functions.
+- **Type Safety**: Strictly avoid `any`; use explicit interfaces or `unknown` with type guards.
+- **Error Handling**: Use custom Result types or try/catch with typed domain errors. Never swallow exceptions silently.
+- **Testing**: Every new service function must include a corresponding unit test in `*.test.ts`.
+
+## 5. Git & Workflow Guidelines
+- **Branches**: `feat/<feature-name>`, `fix/<bug-name>`
+- **Commits**: Follow Conventional Commits (e.g., `feat(order): add stripe webhook handler`)
+- **PR Requirement**: All tests and type checks must pass before merging.
+
+## 6. Safety & Security Rules
+- **NEVER** hardcode or commit API secrets (Stripe Secret Key, DB URLs). Always read from `process.env`.
+- Do not run `prisma migrate reset` in production or without explicit confirmation.
+- Validate all incoming request payloads using Zod schemas.</code></pre>
+        </div>
+
+        <div class="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-slate-700 dark:text-slate-300 space-y-1">
+          <span class="font-bold text-amber-600 dark:text-amber-400 block">💡 Tips สำหรับ CLAUDE.md:</span>
+          <p>• ระบุคำสั่งเฉพาะไฟล์เดี่ยว เช่น <code class="font-mono">pnpm test -- &lt;file&gt;</code> เพราะ AI จะได้ไม่ต้องรันเทสต์ทั้งโปรเจ็คทุกครั้ง ประหยัดเวลาได้มหาศาล</p>
+          <p>• หากโปรเจ็คของคุณมีการเปลี่ยนแปลงสถาปัตยกรรม ให้อัปเดตไฟล์นี้เสมอ เพื่อให้ Claude รู้อยู่ตลอด</p>
+        </div>
+      </div>
+
+      <!-- ================= 2. .claudeignore ================= -->
+      <div id="claude-ignore" class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 space-y-6 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold flex items-center justify-center text-sm">2</span>
+            <div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white font-mono">.claudeignore</h3>
+              <p class="text-xs text-slate-500">ตำแหน่ง: วางไว้ที่ Root โฟลเดอร์ของโปรเจ็ค (<code class="font-mono">./.claudeignore</code>)</p>
+            </div>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 self-start sm:self-auto">ช่วยประหยัด Token</span>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+            <span class="text-amber-500">📌</span> ทำไมต้องมีและต้องใส่อะไรบ้าง?
+          </h4>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            หากไม่มีไฟล์นี้ Claude Code อาจเผลอสแกนไฟล์ขนาดใหญ่ เช่น <code class="font-mono">node_modules/</code>, build artifacts หรือ binary files ส่งผลให้ <strong>Context Window เต็มโดยเปล่าประโยชน์</strong> และอาจเสี่ยงเผลออ่าน API Keys จากไฟล์ <code class="font-mono">.env</code>
+          </p>
+          <div class="flex items-center justify-between pt-2">
+            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">ตัวอย่างโค้ดจริงในไฟล์ .claudeignore:</span>
+            <button onclick="copyToClipboard(document.getElementById('code-claudeignore-sample').innerText)" class="px-3 py-1 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 text-xs font-semibold transition-colors flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+              คัดลอกตัวอย่าง
+            </button>
+          </div>
+          <pre id="code-claudeignore-sample" class="bg-slate-950 text-slate-200 p-5 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed border border-slate-800"><code># Dependencies
+node_modules/
+vendor/
+.venv/
+
+# Environment & Secrets (ห้ามอ่านเด็ดขาด)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+token.json
+credentials.json
+
+# Build Outputs & Bundles
+dist/
+build/
+out/
+.next/
+*.o
+*.so
+
+# Caches & Logs
+*.log
+.eslintcache
+.turbo/
+coverage/
+.nyc_output/
+.cache/
+
+# IDE & OS
+.git/
+.vscode/
+.idea/
+.DS_Store</code></pre>
+        </div>
+      </div>
+
+      <!-- ================= 3. .claude/settings.json ================= -->
+      <div id="claude-settings" class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 space-y-6 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold flex items-center justify-center text-sm">3</span>
+            <div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white font-mono">.claude/settings.json</h3>
+              <p class="text-xs text-slate-500">ตำแหน่ง: <code class="font-mono">.claude/settings.json</code></p>
+            </div>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 self-start sm:self-auto">เพิ่มความคล่องตัว</span>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+            <span class="text-amber-500">📌</span> หน้าที่และการตั้งค่า:
+          </h4>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            ใช้กำหนดสิทธิ์การรันคำสั่งโดยไม่ต้องคอยกด Approve ทุกครั้ง เช่น คำสั่ง Read-only อย่าง <code class="font-mono">git status</code>, <code class="font-mono">git diff</code>, หรือคำสั่งรันเทสต์ <code class="font-mono">npm test</code> ทำให้การทำงานร่วมกับ AI ลื่นไหลขึ้นอย่างมาก
+          </p>
+          <div class="flex items-center justify-between pt-2">
+            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">ตัวอย่างโค้ดใน .claude/settings.json:</span>
+            <button onclick="copyToClipboard(document.getElementById('code-claudesettings-sample').innerText)" class="px-3 py-1 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 text-xs font-semibold transition-colors flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+              คัดลอกตัวอย่าง
+            </button>
+          </div>
+          <pre id="code-claudesettings-sample" class="bg-slate-950 text-slate-200 p-5 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed border border-slate-800"><code>{
+  "$schema": "https://json.schemastore.org/partial-claude-settings.json",
+  "theme": "dark",
+  "preferredNotifChannel": "terminal_bell",
+  "autoApprove": [
+    "git status",
+    "git diff",
+    "npm test",
+    "npm run lint",
+    "pnpm test"
+  ],
+  "env": {
+    "NODE_ENV": "development"
+  }
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- ================= 4. .claude/mcp.json ================= -->
+      <div id="claude-mcp" class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 space-y-6 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold flex items-center justify-center text-sm">4</span>
+            <div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white font-mono">.claude/mcp.json</h3>
+              <p class="text-xs text-slate-500">ตำแหน่ง: <code class="font-mono">.claude/mcp.json</code></p>
+            </div>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 self-start sm:self-auto">Extensibility</span>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+            <span class="text-amber-500">📌</span> หน้าที่และการเชื่อมต่อ MCP Tools:
+          </h4>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            ไฟล์นี้ใช้กำหนดค่า **Model Context Protocol (MCP)** เพื่อเชื่อมต่อ Claude กับเซิร์ฟเวอร์ภายนอก เช่น ดึงข้อมูลจากฐานข้อมูล SQLite, ค้นหา Web Docs, หรือเชื่อมกับ GitHub API
+          </p>
+          <div class="flex items-center justify-between pt-2">
+            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">ตัวอย่างโค้ดใน .claude/mcp.json:</span>
+            <button onclick="copyToClipboard(document.getElementById('code-claudemcp-sample').innerText)" class="px-3 py-1 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 text-xs font-semibold transition-colors flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+              คัดลอกตัวอย่าง
+            </button>
+          </div>
+          <pre id="code-claudemcp-sample" class="bg-slate-950 text-slate-200 p-5 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed border border-slate-800"><code>{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    },
+    "fetch": {
+      "command": "uvx",
+      "args": ["mcp-server-fetch"]
+    }
+  }
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- ================= 5. Custom Commands ================= -->
+      <div id="claude-commands" class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 space-y-6 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold flex items-center justify-center text-sm">5</span>
+            <div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white font-mono">.claude/commands/*.md</h3>
+              <p class="text-xs text-slate-500">ตำแหน่ง: <code class="font-mono">.claude/commands/&lt;command-name&gt;.md</code></p>
+            </div>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 self-start sm:self-auto">Slash Commands</span>
+        </div>
+
+        <div class="space-y-4">
+          <h4 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+            <span class="text-amber-500">📌</span> วิธีการสร้างและหลักการทำงาน:
+          </h4>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            ทุกไฟล์ Markdown ที่คุณวางไว้ใต้ <code class="font-mono">.claude/commands/</code> จะกลายเป็น Slash Command ใน Claude CLI โดยอัตโนมัติ เช่น หากตั้งชื่อไฟล์ว่า <code class="font-mono">review.md</code> คุณจะสามารถพิมพ์ <code class="font-mono font-bold text-amber-600 dark:text-amber-400">/review</code> ในแชทได้ทันที!
+          </p>
+
+          <div class="space-y-4 pt-2">
+            <!-- review.md -->
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs text-amber-600 dark:text-amber-400 font-mono">คำสั่งที่ 1: .claude/commands/review.md (เรียกใช้งานด้วย /review)</span>
+                <button onclick="copyToClipboard(document.getElementById('code-cmd-review').innerText)" class="text-[11px] text-slate-500 hover:text-amber-500 font-mono">Copy</button>
+              </div>
+              <pre id="code-cmd-review" class="bg-slate-950 text-slate-200 p-3 rounded-lg text-xs font-mono overflow-x-auto leading-relaxed"><code># /review Command
+Review recent workspace code changes against project standards.
+
+## Instructions
+1. Run `git status` and `git diff` to inspect modified code.
+2. Evaluate: Correctness, Edge Cases, Security (no secrets), and Test Coverage.
+3. Output format:
+   - Summary of Changes
+   - Critical Issues (Blockers)
+   - Improvements / Suggestions
+   - Verdict: Approve / Request Changes</code></pre>
+            </div>
+
+            <!-- commit.md -->
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-xs text-amber-600 dark:text-amber-400 font-mono">คำสั่งที่ 2: .claude/commands/commit.md (เรียกใช้งานด้วย /commit)</span>
+                <button onclick="copyToClipboard(document.getElementById('code-cmd-commit').innerText)" class="text-[11px] text-slate-500 hover:text-amber-500 font-mono">Copy</button>
+              </div>
+              <pre id="code-cmd-commit" class="bg-slate-950 text-slate-200 p-3 rounded-lg text-xs font-mono overflow-x-auto leading-relaxed"><code># /commit Command
+Prepare a clean Conventional Commit message for staged changes.
+
+## Instructions
+1. Run `git status` and `git diff --cached`.
+2. Format message: `<type>(<scope>): <summary>` (types: feat, fix, docs, refactor, test, chore).
+3. Keep subject line under 72 chars, imperative mood.
+4. Present the command `git commit -m "..."` for user confirmation.</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: ANTIGRAVITY TEMPLATE DEEP DIVE & SETUP -->
+    <!-- ========================================== -->
+    <section id="tab-antigravity" class="tab-content hidden space-y-10">
+      
+      <!-- Banner -->
+      <div class="p-6 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-blue-500/20 text-blue-600 dark:text-blue-400">Google Antigravity Guide</span>
+          <h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-1">แนวทางการ Setup แต่ละไฟล์ของ Google Antigravity</h2>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300">คู่มือเจาะลึกระบบ Customization: Rules, Progressive Skills, Hooks และ MCP Servers</p>
+        </div>
+        <button onclick="copyToClipboard('cp -r antigravity/GEMINI.md antigravity/.geminiignore antigravity/.agents .')" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-semibold shadow transition-all flex items-center gap-2 whitespace-nowrap">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+          คัดลอกคำสั่ง Copy Antigravity Template
+        </button>
+      </div>
+
+      <!-- Quick Subnav for Antigravity Files -->
+      <div class="flex flex-wrap gap-2 text-xs font-medium border-b border-slate-200 dark:border-slate-800 pb-3">
+        <a href="#agy-geminimd" class="px-3 py-1.5 rounded-lg bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 hover:bg-blue-200 transition-colors">📄 1. GEMINI.md</a>
+        <a href="#agy-ignore" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">🚫 2. .geminiignore</a>
+        <a href="#agy-skills" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">🧠 3. .agents/skills/ (Progressive Disclosure)</a>
+        <a href="#agy-rules" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">📏 4. .agents/rules/*.md (Modular Rules)</a>
+        <a href="#agy-hooks" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">🪝 5. .agents/hooks.json</a>
+        <a href="#agy-mcp" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">🔌 6. .agents/mcp_config.json</a>
+      </div>
+
+      <!-- ================= 1. GEMINI.md ================= -->
+      <div id="agy-geminimd" class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 space-y-6 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-600 dark:text-blue-400 font-bold flex items-center justify-center text-sm">1</span>
+            <div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white font-mono">GEMINI.md (หรือ AGENTS.md)</h3>
+              <p class="text-xs text-slate-500">ตำแหน่ง: วางไว้ที่ Root โฟลเดอร์ของโปรเจ็ค (<code class="font-mono">./GEMINI.md</code>)</p>
+            </div>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 self-start sm:self-auto">Always-on Rules</span>
+        </div>
+
+        <!-- Explanation: What to put -->
+        <div class="space-y-4">
+          <h4 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+            <span class="text-blue-500">📌</span> ในไฟล์ GEMINI.md ต้องใส่อะไรเข้าไปบ้าง?
+          </h4>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            <code class="font-mono text-blue-600 dark:text-blue-300 font-semibold">GEMINI.md</code> (หรือ <code class="font-mono">AGENTS.md</code>) คือ <strong>กฎระดับ Workspace</strong> ที่ระบบของ Antigravity จะสแกนหาแบบ Hierarchical จาก CWD ขึ้นไปจนถึง Git Root และถูกโหลดเข้าสู่บริบทการทำงานตลอดเวลา (Always-on) ควรประกอบด้วย 5 หมวดหลัก:
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 space-y-1.5">
+              <span class="font-bold text-blue-600 dark:text-blue-400 text-sm block">1. Project Mission &amp; Architecture Boundaries</span>
+              <p class="text-slate-600 dark:text-slate-400">ระบุขอบเขตของโปรเจ็ค โครงสร้างโฟลเดอร์ และหน้าที่ของแต่ละเลเยอร์ (เช่น Domain, Application, Infrastructure) เพื่อให้ Agent รู้ว่าต้องเพิ่มโค้ดที่ไฟล์ไหน</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 space-y-1.5">
+              <span class="font-bold text-blue-600 dark:text-blue-400 text-sm block">2. Standard Operational Commands</span>
+              <p class="text-slate-600 dark:text-slate-400">คำสั่ง Build, Development Server, Unit/Integration Test, Linting, และ Type Checking ที่แน่นอน</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 space-y-1.5">
+              <span class="font-bold text-blue-600 dark:text-blue-400 text-sm block">3. Behavioral Rules for Agent</span>
+              <p class="text-slate-600 dark:text-slate-400">กำหนดพฤติกรรมของ Antigravity: ต้องอธิบายเหตุผลก่อนลงมือแก้, ทำการแก้ไขเฉพาะจุดที่จำเป็น (Minimal diffs), และต้องรันคำสั่ง Verify หลังแก้เสร็จเสมอ</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 space-y-1.5">
+              <span class="font-bold text-blue-600 dark:text-blue-400 text-sm block">4. Security &amp; Destructive Action Guardrails</span>
+              <p class="text-slate-600 dark:text-slate-400">กฎห้ามเปิดเผยหรือ Commit ความลับ (API keys, Tokens), ห้ามรันคำสั่งทำลายล้าง เช่น <code class="font-mono">rm -rf</code>, <code class="font-mono">git reset --hard</code> หรือคำสั่ง Drop Database</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Concrete Example -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">ตัวอย่างโค้ดจริงในไฟล์ GEMINI.md สำหรับนำไปใช้:</span>
+            <button onclick="copyToClipboard(document.getElementById('code-geminimd-sample').innerText)" class="px-3 py-1 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20 text-xs font-semibold transition-colors flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+              คัดลอกตัวอย่าง
+            </button>
+          </div>
+          <pre id="code-geminimd-sample" class="bg-slate-950 text-slate-200 p-5 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed border border-slate-800"><code># Project Rules & Guidelines for Google Antigravity
+
+## 1. Project Overview & Architecture
+- **Project Name**: Cloud-Payment-Gateway
+- **Core Mission**: High-throughput transaction processing API with strict idempotent handling.
+- **Architecture Layers**:
+  - `src/domain/`: Core business models, entities, and validation invariants.
+  - `src/application/`: Use cases, transaction orchestrators, command handlers.
+  - `src/infrastructure/`: Database adapters (PostgreSQL), external bank clients, message queues.
+  - `src/interfaces/`: HTTP API controllers and OpenAPI schemas.
+  - `tests/`: Automated unit and integration test suites.
+
+## 2. Tech Stack & Environment
+- **Runtime**: Python 3.12 (Managed via `uv`)
+- **Framework**: FastAPI + Pydantic v2
+- **Database**: PostgreSQL 16 (SQLAlchemy 2.0 Async + Alembic)
+- **Cache**: Redis 7.2
+
+## 3. Standard Operational Commands
+- Environment Sync: `uv sync`
+- Start Dev Server: `uv run uvicorn src.interfaces.http:app --reload --port 8000`
+- Run All Tests: `uv run pytest`
+- Run Single Test File: `uv run pytest tests/test_payment.py -v`
+- Lint & Format Check: `uv run ruff check .`
+- Auto-format Code: `uv run ruff format .`
+- Static Type Checking: `uv run mypy src`
+
+## 4. Agent Behavioral Rules
+1. **Explain Rationale**: Before invoking file replacement or write tools, explain the architectural reason in 1-2 concise sentences.
+2. **Minimal & Targeted Diffs**: Only modify lines relevant to the prompt. Do not reformat unaffected code or delete existing comments.
+3. **Verify Every Change**: Always run `pytest` or `ruff check` on modified files after completing an edit.
+4. **Preserve Compatibility**: Never alter existing public API schemas without explicit instructions.
+
+## 5. Security & Safety Constraints
+- **Zero Secrets Policy**: Never print, log, or commit secret keys or bearer tokens. Always inject via `.env`.
+- **Destructive Commands Blocked**: Never run `rm -rf`, `DROP DATABASE`, or `git checkout -- .` without asking first.
+- **Strict Input Validation**: Every request body must be parsed through a Pydantic schema with bounds checking.</code></pre>
+        </div>
+
+        <div class="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-slate-700 dark:text-slate-300 space-y-1">
+          <span class="font-bold text-blue-600 dark:text-blue-400 block">💡 ข้อกำหนดสำคัญของ GEMINI.md (Antigravity Constraints):</span>
+          <p>• <strong>ไม่ต้องใส่ YAML Frontmatter</strong> ในไฟล์ <code class="font-mono">GEMINI.md</code> หรือ <code class="font-mono">AGENTS.md</code> ที่วางไว้ที่โฟลเดอร์</p>
+          <p>• <strong>จำกัดขนาดสูงสุด 24 KB / 24,000 bytes ต่อไฟล์</strong> และแชร์โควตากฎรวมที่ 20,000 tokens หากยาวเกินไป ระบบจะลดระดับไปเป็น pointer อ่านตามต้องการแทน</p>
+          <p>• หากมีกฎเฉพาะทาง เช่น กฎ Frontend หรือ Database แนะนำให้แยกไปไว้ใน <code class="font-mono">.agents/rules/</code></p>
+        </div>
+      </div>
+
+      <!-- ================= 2. .geminiignore ================= -->
+      <div id="agy-ignore" class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 space-y-6 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-600 dark:text-blue-400 font-bold flex items-center justify-center text-sm">2</span>
+            <div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white font-mono">.geminiignore</h3>
+              <p class="text-xs text-slate-500">ตำแหน่ง: วางไว้ที่ Root โฟลเดอร์ของโปรเจ็ค (<code class="font-mono">./.geminiignore</code> หรือ <code class="font-mono">./.agentignore</code>)</p>
+            </div>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 self-start sm:self-auto">Indexer Filter</span>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+            <span class="text-blue-500">📌</span> หน้าที่และการทำงาน:
+          </h4>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            กำหนดรายชื่อไฟล์และโฟลเดอร์ที่ Antigravity จะไม่ทำการทำดัชนี (Indexing), ไม่ค้นหาใน Semantic Code Search และไม่สแกนเวลา Agent ทำงาน ช่วยประหยัดทรัพยากรและเพิ่มความปลอดภัย
+          </p>
+          <div class="flex items-center justify-between pt-2">
+            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">ตัวอย่างโค้ดใน .geminiignore:</span>
+            <button onclick="copyToClipboard(document.getElementById('code-geminiignore-sample').innerText)" class="px-3 py-1 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20 text-xs font-semibold transition-colors flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+              คัดลอกตัวอย่าง
+            </button>
+          </div>
+          <pre id="code-geminiignore-sample" class="bg-slate-950 text-slate-200 p-5 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed border border-slate-800"><code># Dependencies & Virtualenvs
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+token.json
+credentials.json
+
+# Build Outputs
+dist/
+build/
+.next/
+target/
+
+# Logs & Caches
+*.log
+.cache/
+.eslintcache
+coverage/
+tmp/
+scratch/</code></pre>
+        </div>
+      </div>
+
+      <!-- ================= 3. .agents/skills/ ================= -->
+      <div id="agy-skills" class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 space-y-6 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-600 dark:text-blue-400 font-bold flex items-center justify-center text-sm">3</span>
+            <div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white font-mono">.agents/skills/&lt;skill-name&gt;/</h3>
+              <p class="text-xs text-slate-500">ตำแหน่ง: <code class="font-mono">.agents/skills/&lt;skill_name&gt;/SKILL.md</code></p>
+            </div>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 self-start sm:self-auto">Progressive Disclosure</span>
+        </div>
+
+        <div class="space-y-4">
+          <h4 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+            <span class="text-blue-500">📌</span> ระบบ Progressive Disclosure ของ Skills ทำงานอย่างไร?
+          </h4>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            Skills คือรันบุ๊กขั้นตอนทำงาน (Procedures) ที่ฉลาดมากใน Antigravity เพราะ <strong>จะไม่ถูกโหลดเนื้อหาเต็มเข้า Context Window ทันที</strong> โดยตอนเริ่ม Agent จะอ่านเฉพาะ <code class="font-mono text-blue-500 font-semibold">name</code> และ <code class="font-mono text-blue-500 font-semibold">description</code> จาก YAML Frontmatter เท่านั้น และจะเปิดอ่านเนื้อหาเต็มเมื่อผู้ใช้สั่งงานที่ตรงกับ Description นั้นๆ
+          </p>
+
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 space-y-2 text-xs">
+            <span class="font-bold text-slate-900 dark:text-white block">โครงสร้างโฟลเดอร์ของ 1 Skill ที่ถูกต้อง:</span>
+            <pre class="bg-slate-950 text-slate-200 p-3 rounded-lg font-mono"><code>.agents/skills/code-review/
+├── SKILL.md                 # บังคับ: มี YAML Frontmatter และขั้นตอนหลัก
+├── scripts/                 # ไม่บังคับ: สคริปต์เสริมสำหรับรันคำสั่ง (เช่น check-clean-tree.sh)
+├── references/              # ไม่บังคับ: เอกสารคู่มืออ้างอิงเชิงลึก (เช่น checklist.md)
+├── examples/                # ไม่บังคับ: ตัวอย่างโค้ดอ้างอิง
+└── resources/               # ไม่บังคับ: เทมเพลตหรือ asset อื่นๆ</code></pre>
+          </div>
+
+          <!-- SKILL.md Example -->
+          <div class="space-y-3 pt-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-700 dark:text-slate-300">ตัวอย่างโค้ดจริงใน SKILL.md:</span>
+              <button onclick="copyToClipboard(document.getElementById('code-skillmd-sample').innerText)" class="px-3 py-1 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20 text-xs font-semibold transition-colors flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                คัดลอกตัวอย่าง
+              </button>
+            </div>
+            <pre id="code-skillmd-sample" class="bg-slate-950 text-slate-200 p-5 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed border border-slate-800"><code>---
+name: code-review
+description: >-
+  Systematic code review runbook for checking modified files against quality,
+  security, and architectural standards. Use this skill when asked to review code,
+  verify a pull request, or audit changes before committing.
+---
+
+# Code Review Skill
+
+This skill guides the agent through an objective review of workspace modifications.
+
+## Procedure
+
+1. **Inspect Working Tree & Staged Changes**:
+   - Check status and diff using git commands:
+     ```bash
+     git status
+     git diff
+     ```
+2. **Review Against Architectural & Quality Standards**:
+   - Consult the detailed [Review Checklist](./references/checklist.md) for quality, performance, and security rules.
+   - Verify that all new logic includes appropriate unit/integration tests.
+3. **Run Automated Quality Checks**:
+   - Execute project linter and test suite to ensure no regressions.
+4. **Formulate Review Feedback**:
+   - **Summary**: Concise bullet points describing the intent and scope of changes.
+   - **Critical Findings**: Bugs, security vulnerabilities, or breaking changes.
+   - **Recommendations**: Optional improvements for style, performance, or clarity.
+   - **Approval Status**: `Approve`, `Comment`, or `Request Changes`.</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= 4. .agents/rules/*.md ================= -->
+      <div id="agy-rules" class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 space-y-6 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-600 dark:text-blue-400 font-bold flex items-center justify-center text-sm">4</span>
+            <div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white font-mono">.agents/rules/*.md</h3>
+              <p class="text-xs text-slate-500">ตำแหน่ง: <code class="font-mono">.agents/rules/coding-standards.md</code></p>
+            </div>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 self-start sm:self-auto">Modular Rules</span>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+            <span class="text-blue-500">📌</span> ทำไมควรแยกกฎออกมาเป็น Modular Rules?
+          </h4>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            เพื่อป้องกันไม่ให้ไฟล์ <code class="font-mono">GEMINI.md</code> มีขนาดใหญ่เกิน 24 KB เราสามารถแยกกฎเฉพาะทางออกมาเป็นไฟล์อิสระใต้ <code class="font-mono">.agents/rules/</code> เช่น กฎด้าน Type Safety, กฎการเขียน Frontend Component หรือกฎการทำ Database Migration
+          </p>
+          <div class="flex items-center justify-between pt-2">
+            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">ตัวอย่างโค้ดใน .agents/rules/coding-standards.md:</span>
+            <button onclick="copyToClipboard(document.getElementById('code-rules-sample').innerText)" class="px-3 py-1 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20 text-xs font-semibold transition-colors flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+              คัดลอกตัวอย่าง
+            </button>
+          </div>
+          <pre id="code-rules-sample" class="bg-slate-950 text-slate-200 p-5 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed border border-slate-800"><code># Workspace Coding Standards & Quality Gates
+
+## 1. Type Safety & Contracts
+- All new code must be fully type-annotated.
+- Avoid escape hatches like `any` or untyped dictionaries for core domain models.
+- Validate external input contracts using schema validation (e.g. Zod, Pydantic).
+
+## 2. Error Handling
+- Never suppress exceptions with empty `catch` or `except: pass` blocks.
+- Throw or return typed errors with clear contextual messages and error codes.
+- Ensure all resources (file handles, database connections) are closed properly.
+
+## 3. Testing Standards
+- All bug fixes must be accompanied by a regression test reproducing the issue before the fix.
+- New domain or utility logic must achieve unit test coverage.
+- Avoid testing implementation details; test behaviors, inputs, and outputs.</code></pre>
+        </div>
+      </div>
+
+      <!-- ================= 5. .agents/hooks.json ================= -->
+      <div id="agy-hooks" class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 space-y-6 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-600 dark:text-blue-400 font-bold flex items-center justify-center text-sm">5</span>
+            <div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white font-mono">.agents/hooks.json</h3>
+              <p class="text-xs text-slate-500">ตำแหน่ง: <code class="font-mono">.agents/hooks.json</code></p>
+            </div>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 self-start sm:self-auto">Automated Guardrails</span>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+            <span class="text-blue-500">📌</span> หน้าที่และตัวอย่างการใช้งาน Lifecycle Hooks:
+          </h4>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            ไฟล์นี้ช่วยให้คุณสั่งรันคำสั่งเชลล์ภายนอก ณ จุดเวลาต่างๆ ในลูปการทำงานของ Agent ได้โดยอัตโนมัติ:
+            <br>• <code class="font-mono text-blue-400">PreToolUse</code>: ตรวจสอบความปลอดภัยก่อน Agent จะรันคำสั่ง
+            <br>• <code class="font-mono text-blue-400">PostToolUse</code>: รัน Linter ตรวจสอบโค้ดทันทีหลังจาก Agent แก้ไขไฟล์ (<code class="font-mono">replace_file_content</code>)
+          </p>
+          <div class="flex items-center justify-between pt-2">
+            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">ตัวอย่างโค้ดใน .agents/hooks.json:</span>
+            <button onclick="copyToClipboard(document.getElementById('code-hooks-sample').innerText)" class="px-3 py-1 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20 text-xs font-semibold transition-colors flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+              คัดลอกตัวอย่าง
+            </button>
+          </div>
+          <pre id="code-hooks-sample" class="bg-slate-950 text-slate-200 p-5 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed border border-slate-800"><code>{
+  "lint-on-change": {
+    "enabled": false,
+    "PostToolUse": [
+      {
+        "matcher": "replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npm run lint --silent || true",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  },
+  "pre-command-safety": {
+    "enabled": false,
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[HOOK] PreToolUse validation passed'",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- ================= 6. .agents/mcp_config.json ================= -->
+      <div id="agy-mcp" class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 space-y-6 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-xl bg-blue-500/20 text-blue-600 dark:text-blue-400 font-bold flex items-center justify-center text-sm">6</span>
+            <div>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white font-mono">.agents/mcp_config.json</h3>
+              <p class="text-xs text-slate-500">ตำแหน่ง: <code class="font-mono">.agents/mcp_config.json</code></p>
+            </div>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 self-start sm:self-auto">Tool Protocol</span>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+            <span class="text-blue-500">📌</span> หน้าที่และการทำงาน:
+          </h4>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+            รองรับทั้งรูปแบบ **Stdio** (เรียก Process ในเครื่องผ่าน command + args) และ **SSE** (เชื่อมต่อไปยัง URL ของ Remote Server) โดยเมื่อเชื่อมต่อสำเร็จ เครื่องมือต่างๆ จะถูก Register เข้าเป็น Agent Tool ทันที
+          </p>
+          <div class="flex items-center justify-between pt-2">
+            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">ตัวอย่างโค้ดใน .agents/mcp_config.json:</span>
+            <button onclick="copyToClipboard(document.getElementById('code-agymcp-sample').innerText)" class="px-3 py-1 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20 text-xs font-semibold transition-colors flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+              คัดลอกตัวอย่าง
+            </button>
+          </div>
+          <pre id="code-agymcp-sample" class="bg-slate-950 text-slate-200 p-5 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed border border-slate-800"><code>{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
+    },
+    "fetch": {
+      "command": "uvx",
+      "args": ["mcp-server-fetch"]
+    }
+  }
+}</code></pre>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB: REAL-WORLD FULLSTACK ENTERPRISE EXAMPLE -->
+    <!-- ========================================== -->
+    <section id="tab-examples" class="tab-content hidden space-y-10">
+      
+      <!-- Example Banner -->
+      <div class="p-6 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-blue-500/10 to-amber-500/10 border border-emerald-500/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 mb-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            Production-Ready Example: DataPulse Enterprise
+          </div>
+          <h2 class="text-2xl font-bold text-slate-900 dark:text-white">ตัวอย่างโปรเจ็คจริง: Enterprise Fullstack Web App</h2>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+            สอน AI ให้เชี่ยวชาญ <strong>Python + MSSQL + PostgreSQL + HTML5 + CSS Animation + JS</strong> พร้อมผ่านเกณฑ์ <strong>SonarQube Quality Gate</strong>
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button onclick="copyToClipboard('cd examples/claude && ./start.sh')" class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-semibold shadow transition-all flex items-center gap-1.5">
+            รัน Claude Example (Auto .venv)
+          </button>
+          <button onclick="copyToClipboard('cd examples/antigravity && ./start.sh')" class="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-semibold shadow transition-all flex items-center gap-1.5">
+            รัน Antigravity Example (Auto .venv)
+          </button>
+        </div>
+      </div>
+
+      <!-- Tech Stack Badges Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
+        <div class="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center">
+          <span class="text-xl block mb-1">🐍</span>
+          <span class="font-bold text-slate-900 dark:text-white block">Python 3.12+</span>
+          <span class="text-[11px] text-slate-500">FastAPI &amp; Pydantic v2</span>
+        </div>
+        <div class="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center">
+          <span class="text-xl block mb-1">🗄️</span>
+          <span class="font-bold text-slate-900 dark:text-white block">MSSQL Server</span>
+          <span class="text-[11px] text-slate-500">T-SQL &amp; Parameterized</span>
+        </div>
+        <div class="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center">
+          <span class="text-xl block mb-1">🐘</span>
+          <span class="font-bold text-slate-900 dark:text-white block">PostgreSQL 16</span>
+          <span class="text-[11px] text-slate-500">AsyncPG &amp; Analytics</span>
+        </div>
+        <div class="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center">
+          <span class="text-xl block mb-1">✨</span>
+          <span class="font-bold text-slate-900 dark:text-white block">CSS Animations</span>
+          <span class="text-[11px] text-slate-500">60fps GPU Hardware</span>
+        </div>
+        <div class="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center">
+          <span class="text-xl block mb-1">🌐</span>
+          <span class="font-bold text-slate-900 dark:text-white block">HTML5 &amp; ES6+</span>
+          <span class="text-[11px] text-slate-500">Semantic &amp; XSS Safe</span>
+        </div>
+        <div class="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center">
+          <span class="text-xl block mb-1">🛡️</span>
+          <span class="font-bold text-slate-900 dark:text-white block">SonarQube</span>
+          <span class="text-[11px] text-slate-500">0 Bugs / 0 Vulnerability</span>
+        </div>
+      </div>
+
+      <!-- Comparative AI Configurations -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Claude Example Breakdown -->
+        <div class="rounded-2xl border border-amber-200 dark:border-amber-900/40 bg-white dark:bg-slate-900 p-6 space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold flex items-center justify-center text-sm">C</div>
+            <div>
+              <h3 class="font-bold text-base text-slate-900 dark:text-white">Claude Code ในตัวอย่างนี้</h3>
+              <p class="text-xs text-slate-500">โฟลเดอร์: <code class="font-mono text-amber-600 dark:text-amber-400">examples/claude/</code></p>
+            </div>
+          </div>
+          <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+            กำหนดให้ Claude เข้าใจไวยากรณ์ทั้ง MSSQL/Postgres, รู้วิธีเขียน CSS Animations โดยไม่ทำให้เกิด Layout Reflow, และมี Custom Slash Commands ในตัว:
+          </p>
+          <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300">
+            <li class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
+              <strong class="text-amber-600 dark:text-amber-400 font-mono">/sonar-scan:</strong> สั่งรัน pytest coverage และเรียก SonarQube Scanner พร้อมวิเคราะห์ผล Quality Gate
+            </li>
+            <li class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
+              <strong class="text-amber-600 dark:text-amber-400 font-mono">/animate:</strong> สั่งให้สร้าง Keyframe Animations ระดับ 60fps โดยใช้เฉพาะ <code class="font-mono">transform</code> และ <code class="font-mono">opacity</code>
+            </li>
+            <li class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
+              <strong class="text-amber-600 dark:text-amber-400 font-mono">/db-query:</strong> ช่วยออกแบบและทดสอบคิวรีสำหรับ MSSQL (TOP, OFFSET-FETCH) และ Postgres (LIMIT, RETURNING)
+            </li>
+          </ul>
+        </div>
+
+        <!-- Antigravity Example Breakdown -->
+        <div class="rounded-2xl border border-blue-200 dark:border-blue-900/40 bg-white dark:bg-slate-900 p-6 space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-600 dark:text-blue-400 font-bold flex items-center justify-center text-sm">A</div>
+            <div>
+              <h3 class="font-bold text-base text-slate-900 dark:text-white">Google Antigravity ในตัวอย่างนี้</h3>
+              <p class="text-xs text-slate-500">โฟลเดอร์: <code class="font-mono text-blue-600 dark:text-blue-400">examples/antigravity/</code></p>
+            </div>
+          </div>
+          <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+            ติดตั้งระบบ Customization ขั้นสูง พร้อม Progressive Skills และ Lifecycle Hooks ที่คอยป้องกันความผิดพลาดก่อนเกิดขึ้น:
+          </p>
+          <ul class="text-xs space-y-2 text-slate-600 dark:text-slate-300">
+            <li class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
+              <strong class="text-blue-600 dark:text-blue-400 font-mono">Skill: sonar-audit:</strong> รันบุ๊กตรวจสอบความปลอดภัย (CWE-89, CWE-79) และ Cognitive Complexity &lt;= 15
+            </li>
+            <li class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
+              <strong class="text-blue-600 dark:text-blue-400 font-mono">Skill: css-animation:</strong> รันบุ๊กคำนวณ Frame Budget 16.67ms และเทคนิค Hardware Layer Promotion
+            </li>
+            <li class="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800">
+              <strong class="text-blue-600 dark:text-blue-400 font-mono">Hooks (.agents/hooks.json):</strong> รัน Linter อัตโนมัติหลังแก้โค้ด และตรวจสอบความปลอดภัยของคำสั่ง SQL
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- SonarQube & CSS Code Showcase -->
+      <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 space-y-6">
+        <h3 class="font-bold text-lg text-slate-900 dark:text-white">โค้ดสำคัญในโปรเจ็คตัวอย่าง (Code Showcases)</h3>
+
+        <!-- Code 1: 60fps CSS Animations -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">1. src/static/css/animations.css (60 FPS GPU-Accelerated Keyframes):</span>
+            <button onclick="copyToClipboard(document.getElementById('code-ex-css').innerText)" class="px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-xs font-mono">Copy CSS</button>
+          </div>
+          <pre id="code-ex-css" class="bg-slate-950 text-slate-200 p-4 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed border border-slate-800"><code>/* Pulse Glow (ใชั scale3d ป้องกัน Layout Reflow) */
+@keyframes pulseGlow {
+  0%, 100% {
+    transform: scale3d(1, 1, 1);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+  }
+  50% {
+    transform: scale3d(1.02, 1.02, 1);
+    box-shadow: 0 0 20px 4px rgba(37, 99, 235, 0.6);
+  }
+}
+
+/* Floating Card Animation */
+@keyframes floatCard {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -6px, 0); }
+}
+
+/* Accessibility: รองรับผู้ใช้ที่ตั้งค่า prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse-glow, .animate-float {
+    animation: none !important;
+    transform: none !important;
+  }
+}</code></pre>
+        </div>
+
+        <!-- Code 2: Sonar-project.properties -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">2. sonar-project.properties (คอนฟิก SonarQube Scanner):</span>
+            <button onclick="copyToClipboard(document.getElementById('code-ex-sonar').innerText)" class="px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-xs font-mono">Copy Properties</button>
+          </div>
+          <pre id="code-ex-sonar" class="bg-slate-950 text-slate-200 p-4 rounded-xl text-xs font-mono overflow-x-auto leading-relaxed border border-slate-800"><code>sonar.projectKey=datapulse-enterprise-portal
+sonar.projectName=DataPulse Enterprise Portal
+sonar.sources=src
+sonar.tests=tests
+sonar.python.coverage.reportPaths=coverage.xml
+sonar.exclusions=**/.venv/**,**/dist/**,**/*.min.js
+sonar.coverage.exclusions=src/static/**,tests/**
+sonar.qualitygate.wait=true</code></pre>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 4: INTERACTIVE PROJECT TREE -->
+    <!-- ========================================== -->
+    <section id="tab-tree" class="tab-content hidden space-y-6">
+      <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="font-bold text-lg text-slate-900 dark:text-white">โครงสร้างไดเรกทอรีเต็มของโปรเจ็ค (Full Project Tree)</h3>
+            <p class="text-xs text-slate-500">คลิกที่แต่ละรายการเพื่อดูคำอธิบายหน้าที่ของไฟล์</p>
+          </div>
+          <button onclick="copyToClipboard(document.getElementById('raw-tree-text').innerText)" class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-medium transition-all">
+            คัดลอก Tree
+          </button>
+        </div>
+
+        <pre id="raw-tree-text" class="text-xs sm:text-sm font-mono bg-slate-900 text-slate-200 p-5 rounded-xl overflow-x-auto leading-relaxed border border-slate-800">
+AI-Project-Structure/
+├── <span class="text-emerald-400">README.md</span>                                  <span class="text-slate-500"># เอกสารสรุปภาพรวมโปรเจ็คต้นแบบ</span>
+├── <span class="text-emerald-400 font-semibold">index.html</span>                                 <span class="text-slate-500"># คู่มือการใช้งานฉบับ interactive สวยงาม (ไฟล์นี้)</span>
+├── <span class="text-emerald-400">manual/</span>
+│   └── <span class="text-emerald-400">index.html</span>                             <span class="text-slate-500"># สำเนาคู่มือในโฟลเดอร์เอกสาร</span>
+│
+├── <span class="text-amber-400 font-bold">claude/</span>                                    <span class="text-slate-400"># 📂 โฟลเดอร์ต้นแบบ Claude Code (Master Template)</span>
+│   ├── <span class="text-amber-300 font-semibold">CLAUDE.md</span>                              <span class="text-slate-500"># กฎหลัก สถาปัตยกรรม คำสั่ง build/test และสไตล์โค้ด</span>
+│   ├── <span class="text-amber-300">.claudeignore</span>                          <span class="text-slate-500"># กรองไฟล์ที่ไม่ต้องการให้ Claude สแกน</span>
+│   ├── <span class="text-amber-300">README.md</span>                              <span class="text-slate-500"># คู่มือนำเทมเพลต Claude ไปใช้</span>
+│   ├── <span class="text-emerald-300">example -> ../examples/claude</span>          <span class="text-slate-500"># 🔗 Symlink เชื่อมต่อไปยังตัวอย่างโปรเจ็คเต็ม</span>
+│   └── <span class="text-amber-300">.claude/</span>
+│       ├── <span class="text-amber-200">settings.json</span>                      <span class="text-slate-500"># การตั้งค่า Permissions, Auto-approve commands</span>
+│       ├── <span class="text-amber-200">mcp.json</span>                           <span class="text-slate-500"># การตั้งค่า MCP Servers</span>
+│       └── <span class="text-amber-200">commands/</span>                          <span class="text-slate-500"># Custom Slash Commands (/review, /test, /commit)</span>
+│
+├── <span class="text-blue-400 font-bold">antigravity/</span>                               <span class="text-slate-400"># 📂 โฟลเดอร์ต้นแบบ Google Antigravity (Master Template)</span>
+│   ├── <span class="text-blue-300 font-semibold">GEMINI.md</span>                              <span class="text-slate-500"># กฎหลักประจำ Workspace (Always-on Rules)</span>
+│   ├── <span class="text-blue-300">.geminiignore</span>                          <span class="text-slate-500"># กรองไฟล์ที่ไม่ต้องการให้ Antigravity สแกน</span>
+│   ├── <span class="text-blue-300">README.md</span>                              <span class="text-slate-500"># คู่มือนำเทมเพลต Antigravity ไปใช้</span>
+│   ├── <span class="text-emerald-300">example -> ../examples/antigravity</span>     <span class="text-slate-500"># 🔗 Symlink เชื่อมต่อไปยังตัวอย่างโปรเจ็คเต็ม</span>
+│   └── <span class="text-blue-300">.agents/</span>                               <span class="text-slate-500"># Customization Root Directory</span>
+│       ├── <span class="text-blue-200">hooks.json</span>                         <span class="text-slate-500"># Lifecycle Hooks (Pre/Post tool automation)</span>
+│       ├── <span class="text-blue-200">mcp_config.json</span>                    <span class="text-slate-500"># การตั้งค่า MCP Servers</span>
+│       ├── <span class="text-blue-200">rules/</span>                             <span class="text-slate-500"># กฎแยกหมวดหมู่ (Modular Rules)</span>
+│       └── <span class="text-blue-200">skills/</span>                            <span class="text-slate-500"># On-Demand Workflows (Progressive Disclosure)</span>
+│
+└── <span class="text-emerald-400 font-bold">examples/</span>                                  <span class="text-slate-400"># 🚀 โฟลเดอร์ตัวอย่าง Fullstack Web App จริง</span>
+    ├── <span class="text-amber-300 font-semibold">claude/</span>                                <span class="text-slate-500"># ตัวอย่างสำหรับ Claude (Python + MSSQL/PG + UI + Sonar)</span>
+    │   ├── <span class="text-slate-300">CLAUDE.md</span>, <span class="text-slate-300">sonar-project.properties</span>, <span class="text-slate-300">src/</span>, <span class="text-slate-300">tests/</span>
+    └── <span class="text-blue-300 font-semibold">antigravity/</span>                           <span class="text-slate-500"># ตัวอย่างสำหรับ Antigravity (Python + MSSQL/PG + UI + Sonar)</span>
+        </pre>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 5: QUICK COPY & COMMANDS -->
+    <!-- ========================================== -->
+    <section id="tab-commands" class="tab-content hidden space-y-8">
+      
+      <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+        <div>
+          <h3 class="font-bold text-lg text-slate-900 dark:text-white">คำสั่งคัดลอก Master Template ไปยังโปรเจ็คใหม่</h3>
+          <p class="text-xs text-slate-500">เลือกรูปแบบที่ต้องการแล้วคลิกปุ่ม Copy เพื่อนำคำสั่งไปวางใน Terminal ได้ทันที</p>
+        </div>
+
+        <!-- Command 1: Claude Code -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-amber-600 dark:text-amber-400">1. สำหรับโปรเจ็คที่ใช้ Claude Code:</span>
+            <button onclick="copyToClipboard('cp -r /Users/jaturonp/Documents/AI-Project-Structure/claude/CLAUDE.md /Users/jaturonp/Documents/AI-Project-Structure/claude/.claudeignore /Users/jaturonp/Documents/AI-Project-Structure/claude/.claude .')" class="text-xs px-2.5 py-1 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 font-semibold transition-colors">
+              คัดลอกคำสั่ง
+            </button>
+          </div>
+          <pre class="bg-slate-900 text-slate-200 p-3 rounded-xl text-xs font-mono overflow-x-auto"><code>cp -r /Users/jaturonp/Documents/AI-Project-Structure/claude/CLAUDE.md \
+      /Users/jaturonp/Documents/AI-Project-Structure/claude/.claudeignore \
+      /Users/jaturonp/Documents/AI-Project-Structure/claude/.claude .</code></pre>
+        </div>
+
+        <!-- Command 2: Google Antigravity -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-blue-600 dark:text-blue-400">2. สำหรับโปรเจ็คที่ใช้ Google Antigravity:</span>
+            <button onclick="copyToClipboard('cp -r /Users/jaturonp/Documents/AI-Project-Structure/antigravity/GEMINI.md /Users/jaturonp/Documents/AI-Project-Structure/antigravity/.geminiignore /Users/jaturonp/Documents/AI-Project-Structure/antigravity/.agents .')" class="text-xs px-2.5 py-1 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20 font-semibold transition-colors">
+              คัดลอกคำสั่ง
+            </button>
+          </div>
+          <pre class="bg-slate-900 text-slate-200 p-3 rounded-xl text-xs font-mono overflow-x-auto"><code>cp -r /Users/jaturonp/Documents/AI-Project-Structure/antigravity/GEMINI.md \
+      /Users/jaturonp/Documents/AI-Project-Structure/antigravity/.geminiignore \
+      /Users/jaturonp/Documents/AI-Project-Structure/antigravity/.agents .</code></pre>
+        </div>
+
+        <!-- Command 3: Dual Setup -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400">3. สำหรับโปรเจ็คที่ต้องการรองรับทั้งสองระบบพร้อมกัน (Dual-Agent Setup):</span>
+            <button onclick="copyToClipboard('cp -r /Users/jaturonp/Documents/AI-Project-Structure/claude/CLAUDE.md /Users/jaturonp/Documents/AI-Project-Structure/claude/.claudeignore /Users/jaturonp/Documents/AI-Project-Structure/claude/.claude /Users/jaturonp/Documents/AI-Project-Structure/antigravity/GEMINI.md /Users/jaturonp/Documents/AI-Project-Structure/antigravity/.geminiignore /Users/jaturonp/Documents/AI-Project-Structure/antigravity/.agents .')" class="text-xs px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 font-semibold transition-colors">
+              คัดลอกคำสั่ง
+            </button>
+          </div>
+          <pre class="bg-slate-900 text-slate-200 p-3 rounded-xl text-xs font-mono overflow-x-auto"><code>cp -r /Users/jaturonp/Documents/AI-Project-Structure/claude/CLAUDE.md \
+      /Users/jaturonp/Documents/AI-Project-Structure/claude/.claudeignore \
+      /Users/jaturonp/Documents/AI-Project-Structure/claude/.claude \
+      /Users/jaturonp/Documents/AI-Project-Structure/antigravity/GEMINI.md \
+      /Users/jaturonp/Documents/AI-Project-Structure/antigravity/.geminiignore \
+      /Users/jaturonp/Documents/AI-Project-Structure/antigravity/.agents .</code></pre>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200 dark:border-slate-800 mt-16 py-8 text-center text-xs text-slate-500">
+    <p>AI Project Structure Master Manual • สร้างขึ้นเพื่อการพัฒนาร่วมกับ AI อย่างมีประสิทธิภาพสูงสุด</p>
+    <p class="mt-1">Workspace Path: <code class="font-mono">/Users/jaturonp/Documents/AI-Project-Structure</code></p>
+  </footer>
+
+  <script>
+    // Tab Switching
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      const target = document.getElementById('tab-' + tabId);
+      if (target) target.classList.remove('hidden');
+
+      // Update Desktop Nav styles
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        if (btn.getAttribute('data-tab') === tabId) {
+          btn.className = 'tab-btn px-3 py-1.5 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-semibold transition-all shadow-sm';
+        } else {
+          btn.className = 'tab-btn px-3 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all';
+        }
+      });
+
+      // Update Mobile Nav styles
+      document.querySelectorAll('.tab-btn-mobile').forEach(btn => {
+        if (btn.getAttribute('data-tab') === tabId) {
+          btn.className = 'tab-btn-mobile whitespace-nowrap px-3 py-1.5 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-semibold';
+        } else {
+          btn.className = 'tab-btn-mobile whitespace-nowrap px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300';
+        }
+      });
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Copy to clipboard with toast
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('คัดลอกลงคลิปบอร์ดเรียบร้อยแล้ว!');
+      }).catch(err => {
+        console.error('Failed to copy', err);
+        showToast('ไม่สามารถคัดลอกได้');
+      });
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const msg = document.getElementById('toast-message');
+      msg.textContent = message;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2500);
+    }
+
+    // Theme toggle
+    function toggleTheme() {
+      const html = document.documentElement;
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+
+    // Initial theme check
+    if (localStorage.getItem('theme') === 'light') {
+      document.documentElement.classList.remove('dark');
+    }
+
+    // Initialize default tab
+    switchTab('overview');
+  </script>
+</body>
+</html>

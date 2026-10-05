@@ -1,0 +1,52 @@
+# Antigravity Ignore File
+# Specifies files and folders that Antigravity should ignore when searching or indexing.
+
+# Dependencies
+node_modules/
+vendor/
+.venv/
+env/
+__pycache__/
+*.pyc
+
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+credentials.json
+token.json
+secrets.*
+
+# Build Outputs
+dist/
+build/
+out/
+.next/
+.nuxt/
+target/
+*.o
+*.so
+
+# Logs & Cache
+*.log
+.cache/
+.eslintcache
+coverage/
+.nyc_output/
+.turbo/
+
+# Version Control & IDE
+.git/
+.svn/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Scratch and Temporary files
+tmp/
+temp/
+scratch/

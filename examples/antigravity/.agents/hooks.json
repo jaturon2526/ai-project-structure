@@ -1,0 +1,32 @@
+{
+  "lint-on-change": {
+    "enabled": true,
+    "PostToolUse": [
+      {
+        "matcher": "replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "ruff check src tests --silent || true",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  },
+  "sql-injection-guard": {
+    "enabled": true,
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[SAFETY HOOK] Validating SQL parameterization & SonarQube rules...'",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+# Antigravity Ignore for DataPulse Portal
+.venv/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+token.json
+credentials.json
+coverage.xml
+.coverage
+coverage/
+.scannerwork/
+.idea/
+.vscode/
+.DS_Store
+*.log

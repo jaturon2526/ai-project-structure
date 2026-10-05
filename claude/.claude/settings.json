@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/partial-claude-settings.json",
+  "preferredNotifChannel": "terminal_bell",
+  "theme": "dark",
+  "autoApprove": [
+    "git status",
+    "git diff",
+    "npm test",
+    "npm run lint"
+  ],
+  "env": {
+    "NODE_ENV": "development"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/partial-claude-settings.json",
+  "theme": "dark",
+  "preferredNotifChannel": "terminal_bell",
+  "autoApprove": [
+    "git status",
+    "git diff",
+    "pytest",
+    "ruff check",
+    "sonar-scanner"
+  ],
+  "env": {
+    "APP_ENV": "development",
+    "MSSQL_DATABASE": "datapulse_erp",
+    "POSTGRES_DATABASE": "datapulse_analytics"
+  }
+}

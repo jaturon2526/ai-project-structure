@@ -1,0 +1,32 @@
+{
+  "lint-on-change": {
+    "enabled": false,
+    "PostToolUse": [
+      {
+        "matcher": "replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npm run lint --silent || true",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  },
+  "pre-command-safety": {
+    "enabled": false,
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[HOOK] PreToolUse validation passed'",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

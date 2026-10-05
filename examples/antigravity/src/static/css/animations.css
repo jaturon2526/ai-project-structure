@@ -1,0 +1,103 @@
+/**
+ * CSS Animations Module - 60 FPS GPU-Accelerated
+ * Rule: Only animate transform and opacity.
+ */
+
+/* 1. Pulse Glow Animation */
+@keyframes pulseGlow {
+  0% {
+    transform: scale3d(1, 1, 1);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+  }
+  50% {
+    transform: scale3d(1.02, 1.02, 1);
+    box-shadow: 0 0 20px 4px rgba(37, 99, 235, 0.6);
+  }
+  100% {
+    transform: scale3d(1, 1, 1);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+  }
+}
+
+/* 2. Floating Card Animation */
+@keyframes floatCard {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -6px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* 3. Slide Fade In */
+@keyframes slideFadeIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* 4. Shimmer Loading Effect */
+@keyframes shimmerWave {
+  0% {
+    transform: translate3d(-100%, 0, 0);
+  }
+  100% {
+    transform: translate3d(100%, 0, 0);
+  }
+}
+
+/* Utility Classes */
+.animate-pulse-glow {
+  animation: pulseGlow 2.5s infinite ease-in-out;
+  will-change: transform, box-shadow;
+}
+
+.animate-float {
+  animation: floatCard 4s infinite ease-in-out;
+  will-change: transform;
+}
+
+.animate-fade-in {
+  animation: slideFadeIn 0.5s ease-out forwards;
+}
+
+.shimmer-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmerWave 2s infinite;
+}
+
+/* Accessibility: Respect Reduced Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse-glow,
+  .animate-float,
+  .animate-fade-in,
+  .shimmer-container::after {
+    animation: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

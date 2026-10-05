@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DataPulse Enterprise Portal</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/animations.css">
+</head>
+<body>
+
+  <!-- Semantic Header -->
+  <header>
+    <div class="logo-badge">
+      <span class="animate-pulse-glow" style="width: 12px; height: 12px; background: #3b82f6; border-radius: 50%; display: inline-block;"></span>
+      <span>DataPulse Enterprise</span>
+    </div>
+    <div class="status-pill">
+      SonarQube: Quality Gate PASSED (0 Bugs / 0 Vulnerabilities)
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <section class="grid-cards">
+      <!-- Card 1: MSSQL Status -->
+      <article class="card animate-float shimmer-container">
+        <h2 class="card-title">MSSQL ERP Cluster</h2>
+        <div class="card-val" style="color: #f59e0b;">CONNECTED</div>
+        <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.5rem;">ODBC 18 • Port 1433 • dbo.Orders</p>
+      </article>
+
+      <!-- Card 2: PostgreSQL Status -->
+      <article class="card animate-float shimmer-container" style="animation-delay: 0.3s;">
+        <h2 class="card-title">PostgreSQL Analytics</h2>
+        <div class="card-val" style="color: #3b82f6;">CONNECTED</div>
+        <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.5rem;">AsyncPG • Port 5432 • TimescaleDB</p>
+      </article>
+
+      <!-- Card 3: Code Quality Gate -->
+      <article class="card animate-float" style="animation-delay: 0.6s;">
+        <h2 class="card-title">SonarQube Coverage</h2>
+        <div class="card-val" style="color: #10b981;">94.2%</div>
+        <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.5rem;">Cognitive Complexity &lt; 10</p>
+      </article>
+    </section>
+
+    <!-- Query Section -->
+    <section class="query-section animate-fade-in">
+      <h2>Multi-Database Query Runner</h2>
+      <p style="color: #94a3b8; font-size: 0.9rem; margin-top: 0.25rem;">
+        Test and verify queries safely executed via parameterized connection pools.
+      </p>
+
+      <div class="actions">
+        <button id="btn-mssql" type="button">Query MSSQL (ERP Orders)</button>
+        <button id="btn-postgres" type="button" class="btn-secondary">Query PostgreSQL (Analytics Metrics)</button>
+      </div>
+
+      <div id="loading" style="display: none; margin-top: 1rem; color: #3b82f6;" class="animate-pulse-glow">
+        Fetching data safely through parameterized pipeline...
+      </div>
+
+      <pre id="output-box">{"message": "Click a button above to execute a secure parameterized query."}</pre>
+    </section>
+  </main>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
