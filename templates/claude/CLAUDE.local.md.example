@@ -1,0 +1,5 @@
+# Personal overrides (copy to CLAUDE.local.md — keep it out of git)
+
+- My local DB: {{connection hint — never real passwords}}
+- I prefer: {{e.g. explain trade-offs briefly before big refactors}}
+- Sandbox URL: {{http://localhost:8000}}

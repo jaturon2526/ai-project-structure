@@ -6,52 +6,81 @@
 
 ---
 
+## 🧭 เริ่มจากตรงไหนดี
+
+| อยากได้อะไร | ไปที่ |
+|---|---|
+| **แม่แบบพร้อมคัดลอกไปโปรเจ็คอื่น** (`CLAUDE.md`, `GEMINI.md`, commands, skills, rules) | [`templates/`](templates/README.md) |
+| โครงเริ่มต้นแบบเต็มชุดต่อเครื่องมือ | `claude/`, `antigravity/` |
+| ดูของจริงในแอปตัวอย่าง (FastAPI + MSSQL/Postgres + SonarQube) | `examples/` |
+| คู่มือ Interactive | `index.html` |
+
+---
+
 ## 🌳 ภาพรวมโครงสร้างโปรเจ็คทั้งระบบ (Full Project Tree)
 
 ```text
 AI-Project-Structure/
-├── README.md                                  # สรุปภาพรวมและการเปรียบเทียบการใช้งาน
-├── index.html                                 # คู่มือฉบับ Interactive สวยงาม (เปิดผ่านเบราว์เซอร์ได้ทันที)
-├── manual/                                    # เอกสารคู่มือฉบับ HTML
-│   └── index.html
+├── README.md                                  # ภาพรวมและการเปรียบเทียบการใช้งาน
+├── index.html                                 # คู่มือฉบับ Interactive (เปิดผ่านเบราว์เซอร์ได้ทันที)
+├── manual/index.html                          # redirect ไปที่ ../index.html (ไม่เก็บไฟล์ซ้ำ)
+├── .gitattributes                             # บังคับ LF (สำคัญกับ *.sh) ป้องกัน CRLF ปน
+├── scripts/
+│   └── check-examples-sync.sh                 # ตรวจ/ซิงก์โค้ดที่ใช้ร่วมกันของ examples ทั้งสองฝั่ง
 │
-├── claude/                                    # 📂 Master Template เปล่าสำหรับ Claude Code
+├── templates/                                 # 📚 คลังแม่แบบนำกลับมาใช้ซ้ำ (แยกตามเครื่องมือ)
+│   ├── install.sh · install.ps1 · new.sh      # คัดลอก preset / สร้างของใหม่จาก blank
+│   ├── claude/                                # CLAUDE.md, .mcp.json, .claude/{settings.json,commands/*}, blank/
+│   └── antigravity/                           # GEMINI.md, .agents/{hooks.json,rules/*,skills/*}, blank/
+│
+├── claude/                                    # 📂 Starter เปล่าสำหรับ Claude Code
 │   ├── CLAUDE.md                              # คำสั่งหลัก กฎสถาปัตยกรรม และสไตล์โค้ด
-│   ├── .claudeignore                          # รายการไฟล์ที่ไม่ต้องการให้ Claude สแกน
+│   ├── .claudeignore                          # (แนวทางเสริม — ไม่ใช่กลไกความปลอดภัย)
+│   ├── .mcp.json                              # MCP Servers ระดับโปรเจ็ค
 │   ├── .claude/
-│   │   ├── settings.json                      # การตั้งค่าพฤติกรรม (Permissions, Auto-approve)
-│   │   ├── mcp.json                           # การตั้งค่า MCP Servers
-│   │   └── commands/                          # Custom Slash Commands (/review, /test, /commit)
-│   ├── example -> ../examples/claude          # 🔗 Symlink เชื่อมต่อไปยังตัวอย่างโปรเจ็คเต็ม
-│   └── README.md                              # คู่มือการนำ claude template ไปใช้
+│   │   ├── settings.json                      # permissions (allow / deny) และ env
+│   │   └── commands/                          # Slash Commands (/review, /test, /commit)
+│   ├── example -> ../examples/claude          # 🔗 Symlink ไปยังตัวอย่างเต็ม
+│   └── README.md
 │
-├── antigravity/                               # 📂 Master Template เปล่าสำหรับ Google Antigravity
-│   ├── GEMINI.md                              # กฎหลักประจำ Workspace (Always-on Rules)
-│   ├── .geminiignore                          # รายการไฟล์ที่ไม่ต้องการให้ Antigravity สแกน
-│   ├── .agents/                               # Customization Root Directory
-│   │   ├── hooks.json                         # Lifecycle Hooks (Pre/Post tool actions)
-│   │   ├── mcp_config.json                    # การตั้งค่า MCP Servers
-│   │   ├── rules/                             # กฎแยกหมวดหมู่ (Modular Rules)
-│   │   └── skills/                            # On-Demand Workflows (Progressive Disclosure)
-│   ├── example -> ../examples/antigravity     # 🔗 Symlink เชื่อมต่อไปยังตัวอย่างโปรเจ็คเต็ม
-│   └── README.md                              # คู่มือการนำ antigravity template ไปใช้
+├── antigravity/                               # 📂 Starter เปล่าสำหรับ Google Antigravity
+│   ├── GEMINI.md                              # กฎหลักประจำ Workspace (Always-on)
+│   ├── .geminiignore                          # (ของ Gemini CLI — Antigravity ไม่รองรับอย่างเป็นทางการ)
+│   ├── .agents/
+│   │   ├── hooks.json                         # Lifecycle Hooks
+│   │   ├── mcp_config.json                    # MCP Servers (ตัวอย่าง)
+│   │   ├── rules/                             # กฎแยกหมวด (ต้องมี frontmatter `trigger`)
+│   │   └── skills/                            # On-Demand Skills (scripts/ resources/)
+│   ├── example -> ../examples/antigravity     # 🔗 Symlink ไปยังตัวอย่างเต็ม
+│   └── README.md
 │
-└── examples/                                  # 🚀 โฟลเดอร์โปรเจ็คตัวอย่างจริง (Fullstack Enterprise Web App)
-    ├── claude/                                # ตัวอย่างสำหรับ Claude Code
-    │   ├── CLAUDE.md                          # กฎเฉพาะ Python + MSSQL/Postgres + JS/HTML5/CSS Animation + SonarQube
-    │   ├── sonar-project.properties           # คอนฟิก SonarQube Scanner ครบวงจร
-    │   ├── .claude/commands/                  # คำสั่ง /sonar-scan, /animate, /db-query
-    │   ├── src/                               # FastAPI Backend + Semantic HTML5 + 60fps CSS Animations
-    │   └── tests/                             # Unit Tests ครอบคลุม >80%
-    └── antigravity/                           # ตัวอย่างสำหรับ Google Antigravity
-        ├── GEMINI.md                          # กฎเฉพาะทางสำหรับ Antigravity
-        ├── sonar-project.properties           # คอนฟิก SonarQube Scanner
-        ├── .agents/skills/                    # สกิล sonar-audit และ css-animation
-        ├── .agents/rules/                     # กฎ sonarqube-clean-code และ database-standards
-        ├── .agents/hooks.json                 # Hooks ตรวจสอบความปลอดภัย SQL และ Lint อัตโนมัติ
-        ├── src/                               # โค้ด Web App ตัวอย่าง
-        └── tests/                             # Unit Tests ครอบคลุม >80%
+└── examples/                                  # 🚀 แอปตัวอย่างจริง (Fullstack Enterprise Web App)
+    ├── claude/                                # CLAUDE.md, .mcp.json, .claude/commands (/sonar-scan /animate /db-query)
+    └── antigravity/                           # GEMINI.md, .agents/{rules,skills,hooks,hooks.json}
+        └── .agents/hooks/sql-guard.py         # ตรวจ SQL ที่ต่อสตริง (CWE-89) แบบทำงานจริง
+        # src/ และ tests/ ของสองฝั่งเหมือนกัน → ตรวจด้วย scripts/check-examples-sync.sh
 ```
+
+> **Windows:** `example` เป็น symlink จริงใน git แต่ถ้า clone โดยไม่เปิด symlink จะกลายเป็นไฟล์ข้อความสั้น ๆ
+> แก้ด้วย `git config core.symlinks true` (ต้องเปิด Developer Mode) แล้ว checkout ใหม่ — หรือเปิดโฟลเดอร์ `examples/<tool>` ตรง ๆ
+
+---
+
+## ⚖️ เปรียบเทียบ Claude Code กับ Antigravity
+
+| หัวข้อ | Claude Code | Google Antigravity |
+|---|---|---|
+| กฎหลัก (always-on) | `CLAUDE.md` (+ `@import`, `CLAUDE.local.md`) | `GEMINI.md` / `AGENTS.md` |
+| กฎแยกไฟล์ | — (ใช้ `@import` ใน CLAUDE.md) | `.agents/rules/*.md` + `trigger:` (`always_on`, `model_decision`, `glob`, `manual`) |
+| คำสั่งที่ผู้ใช้เรียก | `.claude/commands/<name>.md` → `/name` | skill ถูกเรียกเป็น `/name` ได้ใน CLI; (workflows กำลังถูกยกเลิก) |
+| ขั้นตอนงานแบบโหลดเมื่อจำเป็น | `.claude/skills/<name>/SKILL.md` | `.agents/skills/<name>/SKILL.md` (+ `scripts/`, `resources/`, `examples/`) |
+| อนุญาต / บล็อกคำสั่ง | `.claude/settings.json` → `permissions.allow/ask/deny` | Strict Mode / deny rules ในการตั้งค่า |
+| Hooks | `hooks` ใน `settings.json` | `.agents/hooks.json` (`PreToolUse`, `PostToolUse`, `Stop`, …) |
+| MCP | `.mcp.json` (root โปรเจ็ค) | `mcp_config.json` (global `~/.gemini/config/`) |
+| ซ่อนไฟล์จาก agent | `permissions.deny` → `Read(...)` | rule / Strict Mode (`.geminiignore` เป็นของ Gemini CLI) |
+| แนวคิดโหลด context | โหลด CLAUDE.md ทุก session | Progressive disclosure: เห็น name+description ก่อน แล้วค่อยอ่านเต็ม |
+
+รายละเอียดและข้อควรระวัง: [`templates/README.md`](templates/README.md)
 
 ---
 
@@ -75,11 +104,8 @@ AI-Project-Structure/
 
 ---
 
-## 🌐 คู่มือฉบับ Interactive สวยงาม
+## 🌐 คู่มือฉบับ Interactive
 
-เปิดอ่านคู่มือพร้อมตัวอย่างโค้ดและปุ่ม Copy ในเบราว์เซอร์:
 ```bash
-open index.html
-# หรือ
-open manual/index.html
+open index.html        # macOS  (Windows: start index.html)
 ```

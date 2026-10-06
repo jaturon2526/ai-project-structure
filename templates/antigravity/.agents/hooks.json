@@ -1,0 +1,17 @@
+{
+  "lint-on-change": {
+    "enabled": false,
+    "PostToolUse": [
+      {
+        "matcher": "replace_file_content|write_to_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "{{lint command, e.g. npm run lint --silent || true}}",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}
