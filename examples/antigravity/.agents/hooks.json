@@ -3,11 +3,11 @@
     "enabled": true,
     "PostToolUse": [
       {
-        "matcher": "replace_file_content",
+        "matcher": "replace_file_content|write_to_file",
         "hooks": [
           {
             "type": "command",
-            "command": "ruff check src tests --silent || true",
+            "command": "ruff check src tests --quiet || true",
             "timeout": 15
           }
         ]
@@ -16,14 +16,14 @@
   },
   "sql-injection-guard": {
     "enabled": true,
-    "PreToolUse": [
+    "PostToolUse": [
       {
-        "matcher": "run_command",
+        "matcher": "replace_file_content|write_to_file",
         "hooks": [
           {
             "type": "command",
-            "command": "echo '[SAFETY HOOK] Validating SQL parameterization & SonarQube rules...'",
-            "timeout": 5
+            "command": "python .agents/hooks/sql-guard.py src",
+            "timeout": 10
           }
         ]
       }

@@ -1,0 +1,7 @@
+# Normalize line endings: repo stores LF, shell scripts must never be CRLF
+* text=auto eol=lf
+*.sh text eol=lf
+*.py text eol=lf
+*.ps1 text eol=crlf
+*.png binary
+*.jpg binary

@@ -14,12 +14,12 @@
 ```text
 examples/claude/
 ├── CLAUDE.md                          # กฎและคำสั่งเฉพาะทางสำหรับ Claude Code
-├── .claudeignore                      # กรองไฟล์ที่ไม่ต้องการให้ Claude สแกน
+├── .claudeignore                      # (แนวทางเสริม — บังคับจริงด้วย permissions.deny)
+├── .mcp.json                          # MCP Postgres & Filesystem (อ่านค่า ${POSTGRES_URL} จาก env)
 ├── sonar-project.properties           # ไฟล์คอนฟิก SonarQube Scanner
 ├── requirements.txt                   # รายการ dependencies ของ Python
 ├── .claude/
-│   ├── settings.json                  # ตั้งค่า Auto-Approve คำสั่งทดสอบและสแกน
-│   ├── mcp.json                       # เชื่อมต่อ MCP Postgres & Filesystem
+│   ├── settings.json                  # permissions: allow คำสั่งทดสอบ/สแกน, deny อ่าน .env
 │   └── commands/
 │       ├── sonar-scan.md              # คำสั่ง /sonar-scan
 │       ├── animate.md                 # คำสั่ง /animate สำหรับสร้าง CSS Keyframes

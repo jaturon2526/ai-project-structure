@@ -1,3 +1,5 @@
+# NOTE: .geminiignore เป็นฟีเจอร์ของ Gemini CLI ไม่พบในเอกสารทางการของ Antigravity
+# จำกัดการเข้าถึงด้วย rule (.agents/rules/security.md) หรือ Strict Mode / deny rules ในการตั้งค่า
 # Antigravity Ignore File
 # Specifies files and folders that Antigravity should ignore when searching or indexing.
 

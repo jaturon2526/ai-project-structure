@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Workspace Coding Standards & Quality Gates
 
 This rule file provides detailed coding conventions and quality checks for the workspace.

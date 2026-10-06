@@ -18,7 +18,7 @@ antigravity/
 │   └── skills/                                # On-Demand Workflows / Runbooks (โหลดเมื่อถูกเรียกใช้)
 │       └── code-review/
 │           ├── SKILL.md                       # คำสั่งหลักของ Skill (พร้อม YAML Frontmatter: name & description)
-│           ├── references/                    # เอกสารอ้างอิงแบบละเอียด (โหลดแบบ Progressive Disclosure)
+│           ├── resources/                    # เอกสารอ้างอิงแบบละเอียด (โหลดแบบ Progressive Disclosure)
 │           │   └── checklist.md               # เช็คลิสต์ตรวจสอบความถูกต้องและช่องโหว่ความปลอดภัย
 │           └── scripts/                       # สคริปต์ตัวช่วยสำหรับการทำงาน
 │               └── check-clean-tree.sh        # สคริปต์ตรวจสอบ Git Working Tree

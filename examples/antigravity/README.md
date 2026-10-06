@@ -18,19 +18,20 @@ examples/antigravity/
 ├── sonar-project.properties                   # ไฟล์คอนฟิก SonarQube Scanner
 ├── requirements.txt                           # รายการ dependencies ของ Python
 ├── .agents/
-│   ├── hooks.json                             # Lifecycle Hooks (Lint on change, SQL safety guard)
-│   ├── mcp_config.json                        # เชื่อมต่อ MCP Postgres & Filesystem
+│   ├── hooks.json                             # Lifecycle Hooks (Lint on change, SQL injection guard)
+│   ├── hooks/sql-guard.py                     # ตรวจ SQL ที่ต่อสตริง (CWE-89) — ใช้กับ CI ได้: --strict
+│   ├── mcp_config.json                        # เชื่อมต่อ MCP Postgres & Filesystem (ตัวอย่าง — ไฟล์ global อยู่ที่ ~/.gemini/config/)
 │   ├── rules/
 │   │   ├── sonarqube-clean-code.md            # กฎ SonarQube Clean Code (Complexity, Vulnerability)
 │   │   └── database-standards.md              # กฎการเขียน Query MSSQL & PostgreSQL
 │   └── skills/
 │       ├── sonar-audit/                       # สกิลตรวจสอบโค้ดด้วย SonarQube
 │       │   ├── SKILL.md                       # รันบุ๊กคำสั่งตรวจสอบและแก้ปัญหา
-│       │   ├── references/sonarqube-rules.md  # เอกสารอ้างอิง Clean Code Taxonomy
+│       │   ├── resources/sonarqube-rules.md  # เอกสารอ้างอิง Clean Code Taxonomy
 │       │   └── scripts/run-sonar-scan.sh      # สคริปต์รันสแกนอัตโนมัติ
 │       └── css-animation/                     # สกิลออกแบบ CSS Animation ระดับ 60fps
 │           ├── SKILL.md                       # รันบุ๊กสร้าง Keyframes แบบใช้ GPU
-│           └── references/gpu-rules.md        # เอกสารอ้างอิง Browser Rendering Pipeline
+│           └── resources/gpu-rules.md        # เอกสารอ้างอิง Browser Rendering Pipeline
 ├── src/                                       # โค้ด Web App (FastAPI + HTML5/CSS Animations)
 └── tests/                                     # Unit Tests ครอบคลุม >80%
 ```

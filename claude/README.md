@@ -9,10 +9,10 @@
 ```text
 claude/
 ├── CLAUDE.md                 # เอกสารหลักสำหรับ Claude Code (แนวทางการเขียนโค้ด, สถาปัตยกรรม, คำสั่งสำคัญ)
-├── .claudeignore             # ระบุไฟล์หรือโฟลเดอร์ที่ไม่ต้องการให้ Claude อ่าน/ค้นหา (เช่น secret, build, cache)
+├── .claudeignore             # (แนวทางเสริม ไม่อยู่ในเอกสารทางการ — ใช้ permissions.deny เป็นตัวบังคับจริง)
+├── .mcp.json                 # MCP servers ระดับโปรเจ็ค (ต้องอยู่ที่ root)
 ├── .claude/
-│   ├── settings.json         # การตั้งค่าพฤติกรรมของ Claude Code (Permissions, Auto-approve, Env)
-│   ├── mcp.json              # กำหนดค่าเชื่อมต่อ Model Context Protocol (MCP) servers
+│   ├── settings.json         # permissions (allow / deny) และ env
 │   └── commands/             # Custom Slash Commands ประจำโปรเจ็ค
 │       ├── review.md         # คำสั่ง /review สำหรับตรวจสอบโค้ดตามเกณฑ์
 │       ├── test.md           # คำสั่ง /test สำหรับรันเทสต์และวิเคราะห์ข้อผิดพลาด
@@ -26,7 +26,8 @@ claude/
 
 1. **คัดลอกไฟล์ทั้งหมดไปยังโปรเจ็คของคุณ**:
    ```bash
-   cp -r claude/CLAUDE.md claude/.claudeignore claude/.claude /path/to/your-project/
+   cp -r claude/CLAUDE.md claude/.mcp.json claude/.claude /path/to/your-project/
+   # หรือใช้ ../templates/install.sh เพื่อคัดลอกแบบไม่ทับไฟล์เดิม
    ```
 
 2. **ปรับแต่ง `CLAUDE.md`**:
@@ -35,10 +36,10 @@ claude/
    - ใส่คำสั่งจริงสำหรับ Build, Run, Test, Lint
    - เพิ่ม Coding Conventions หรือ Security Rules เฉพาะทางของทีม
 
-3. **ปรับแต่ง `.claudeignore`**:
-   - เพิ่ม Path ไฟล์ขนาดใหญ่ หรือ Sensitive Data เพิ่มเติม
+3. **ปรับแต่ง `permissions.deny`** ใน `.claude/settings.json`:
+   - เพิ่ม Path ที่เป็น Sensitive Data (เช่น `Read(./secrets/**)`)
 
-4. **ปรับแต่ง `.claude/mcp.json`**:
+4. **ปรับแต่ง `.mcp.json`** (ที่ root โปรเจ็ค):
    - เปิดใช้งานหรือเพิ่ม MCP Server ที่ต้องการ (เช่น Database, Git, Fetch)
 
 5. **ใช้งาน Slash Commands ผ่าน Claude CLI**:

@@ -92,3 +92,5 @@ scratch/
 !.agents/
 !.agents/**
 !.geminiignore
+!.mcp.json
+!CLAUDE.local.md.example

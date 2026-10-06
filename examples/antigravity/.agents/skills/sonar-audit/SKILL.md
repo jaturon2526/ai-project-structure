@@ -26,7 +26,7 @@ This skill guides the agent through running a SonarQube code scan, parsing quali
 
 3. **Analyze Quality Gate Metrics**:
    - Check if Quality Gate passed or failed.
-   - Inspect [SonarQube Rules Reference](./references/sonarqube-rules.md) for remediation strategies on:
+   - Inspect [SonarQube Rules Reference](./resources/sonarqube-rules.md) for remediation strategies on:
      - Security Vulnerabilities (CWE-89 SQL Injection, CWE-79 XSS)
      - Cognitive Complexity > 15
      - Duplication > 3%

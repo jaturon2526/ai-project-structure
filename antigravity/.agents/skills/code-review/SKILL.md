@@ -19,7 +19,7 @@ This skill guides the agent through a thorough, objective review of workspace co
      git diff
      ```
 2. **Review Against Architectural & Quality Standards**:
-   - Consult the detailed [Review Checklist](./references/checklist.md) for quality, performance, and security rules.
+   - Consult the detailed [Review Checklist](./resources/checklist.md) for quality, performance, and security rules.
    - Verify that all new logic includes appropriate unit/integration tests.
 3. **Run Automated Quality Checks**:
    - Execute project linter and test suite to ensure no regressions.

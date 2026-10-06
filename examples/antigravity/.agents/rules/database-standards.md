@@ -1,3 +1,8 @@
+---
+trigger: model_decision
+description: Apply when writing, reviewing or migrating SQL, repositories or schema code for MSSQL or PostgreSQL.
+---
+
 # Multi-Database Standards: MSSQL & PostgreSQL
 
 This rule guides all SQL schema design, migrations, and query authoring.

@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # SonarQube Clean Code Quality Gates
 
 This workspace enforces strict SonarQube Clean as You Code compliance:

@@ -1,3 +1,5 @@
+# NOTE: .claudeignore ไม่พบในเอกสารทางการของ Claude Code -- ใช้เป็นเอกสารบอกเจตนาเท่านั้น
+# ห้ามพึ่งพาเป็นกลไกความปลอดภัย: ให้บล็อกไฟล์ลับด้วย permissions.deny ใน .claude/settings.json
 # Claude Ignore File
 # Specifies files and directories that Claude Code should ignore.
 

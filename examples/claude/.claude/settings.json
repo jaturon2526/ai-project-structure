@@ -1,14 +1,20 @@
 {
-  "$schema": "https://json.schemastore.org/partial-claude-settings.json",
-  "theme": "dark",
-  "preferredNotifChannel": "terminal_bell",
-  "autoApprove": [
-    "git status",
-    "git diff",
-    "pytest",
-    "ruff check",
-    "sonar-scanner"
-  ],
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(pytest:*)",
+      "Bash(ruff check:*)",
+      "Bash(ruff format:*)",
+      "Bash(sonar-scanner:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Bash(rm -rf:*)"
+    ]
+  },
   "env": {
     "APP_ENV": "development",
     "MSSQL_DATABASE": "datapulse_erp",

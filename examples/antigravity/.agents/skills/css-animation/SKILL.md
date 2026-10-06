@@ -31,4 +31,4 @@ This skill guides the agent in authoring hardware-accelerated CSS animations tha
      ```
 
 4. **Reference Implementation**:
-   - See [GPU Acceleration Reference](./references/gpu-rules.md) for 60fps frame budgeting.
+   - See [GPU Acceleration Reference](./resources/gpu-rules.md) for 60fps frame budgeting.
